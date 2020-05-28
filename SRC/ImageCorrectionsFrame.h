@@ -30,6 +30,8 @@ protected:
 	void menu_File_SaveOnMenuSelection(wxCommandEvent& event);
 	void menu_File_ExitOnMenuSelection(wxCommandEvent& event);
 	void menu_About_InfoOnMenuSelection(wxCommandEvent& event);
+	void Contrast(int value);
+	void Brightness(int value);
 public:
 	/** Constructor */
 	ImageCorrectionsFrame(wxWindow* parent);
