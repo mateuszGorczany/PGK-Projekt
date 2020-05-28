@@ -1,4 +1,4 @@
-﻿///////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 // C++ code generated with wxFormBuilder (version Oct 26 2018)
 // http://www.wxformbuilder.org/
 //
@@ -24,6 +24,7 @@
 #include <wx/icon.h>
 #include <wx/menu.h>
 #include <wx/frame.h>
+#include <wx/scrolwin.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -33,37 +34,36 @@
 ///////////////////////////////////////////////////////////////////////////////
 class Frame : public wxFrame
 {
-	private:
+private:
 
-	protected:
-		wxPanel* m_Image_Box;
-		wxPanel* m_Color_Hexagon_Box;
-		wxChoice* m_Chanel_choice;
-		wxStaticText* m_StaticText_ChangeCoefficient;
-		wxSlider* m_Slider_ChangeCoefficient;
-		wxStaticText* m_StaticText_MixImages;
-		wxSlider* m_Slider_MixImages;
-		wxMenuBar* m_menubar;
-		wxMenu* menu_File;
-		wxMenu* menu_About;
+protected:
+	wxScrolledWindow* m_Image_Box;
+	wxPanel* m_Color_Hexagon_Box;
+	wxChoice* m_Chanel_choice;
+	wxStaticText* m_StaticText_ChangeCoefficient;
+	wxSlider* m_Slider_ChangeCoefficient;
+	wxStaticText* m_StaticText_MixImages;
+	wxSlider* m_Slider_MixImages;
+	wxMenuBar* m_menubar;
+	wxMenu* menu_File;
+	wxMenu* menu_About;
 
-		// Virtual event handlers, overide them in your derived class
-		virtual void image_BoxOnUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void color_Hexagon_BoxOnLeftDClick( wxMouseEvent& event ) { event.Skip(); }
-		virtual void chanel_choiceOnUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
-		virtual void slider_ChangeCoefficientOnScroll( wxScrollEvent& event ) { event.Skip(); }
-		virtual void slider_MixImagesOnScroll( wxScrollEvent& event ) { event.Skip(); }
-		virtual void menu_File_OpenOnMenuSelection( wxCommandEvent& event ) { event.Skip(); }
-		virtual void menu_File_SaveOnMenuSelection( wxCommandEvent& event ) { event.Skip(); }
-		virtual void menu_File_ExitOnMenuSelection( wxCommandEvent& event ) { event.Skip(); }
-		virtual void menu_About_InfoOnMenuSelection( wxCommandEvent& event ) { event.Skip(); }
+	// Virtual event handlers, overide them in your derived class
+	virtual void image_BoxOnUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
+	virtual void color_Hexagon_BoxOnLeftDClick(wxMouseEvent& event) { event.Skip(); }
+	virtual void chanel_choiceOnUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
+	virtual void slider_ChangeCoefficientOnScroll(wxScrollEvent& event) { event.Skip(); }
+	virtual void slider_MixImagesOnScroll(wxScrollEvent& event) { event.Skip(); }
+	virtual void menu_File_OpenOnMenuSelection(wxCommandEvent& event) { event.Skip(); }
+	virtual void menu_File_SaveOnMenuSelection(wxCommandEvent& event) { event.Skip(); }
+	virtual void menu_File_ExitOnMenuSelection(wxCommandEvent& event) { event.Skip(); }
+	virtual void menu_About_InfoOnMenuSelection(wxCommandEvent& event) { event.Skip(); }
 
 
-	public:
+public:
 
-		Frame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Korekty obrazów"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 865,639 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+	Frame(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Korekty obrazów"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(865, 639), long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL);
 
-		~Frame();
+	~Frame();
 
 };
-
