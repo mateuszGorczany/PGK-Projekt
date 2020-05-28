@@ -4,7 +4,7 @@ ImageCorrectionsFrame::ImageCorrectionsFrame(wxWindow* parent)
     :
     Frame(parent)
 {
-    m_Image_Box->SetScrollbars(20, 20, 50, 50);
+    m_Image_Box->SetScrollbars(20, 20, 50, 48);
     m_Image_Box->SetBackgroundColour(wxColor(192, 192, 192));
 }
 
