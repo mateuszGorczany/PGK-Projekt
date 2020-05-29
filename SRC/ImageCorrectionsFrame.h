@@ -32,6 +32,8 @@ protected:
 	void menu_About_InfoOnMenuSelection(wxCommandEvent& event);
 	void Contrast(int value);
 	void Brightness(int value);
+	void Barwa(int value);
+	void Saturation(int value);
 public:
 	/** Constructor */
 	ImageCorrectionsFrame(wxWindow* parent);
