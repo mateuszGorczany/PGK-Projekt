@@ -23,7 +23,7 @@ void ImageCorrectionsFrame::color_Hexagon_BoxOnLeftDClick(wxMouseEvent& event)
 void ImageCorrectionsFrame::chanel_choiceOnUpdateUI(wxUpdateUIEvent& event)
 {
     // TODO: Implement chanel_choiceOnUpdateUI
-    
+    Repaint();
 }
 
 void ImageCorrectionsFrame::slider_ChangeCoefficientOnScroll(wxScrollEvent& event)
@@ -31,7 +31,8 @@ void ImageCorrectionsFrame::slider_ChangeCoefficientOnScroll(wxScrollEvent& even
     // TODO: Implement slider_ChangeCoefficientOnScroll
     if (m_Chanel_choice->GetSelection() == 0)
     {
-        // Barwa
+        Barwa(m_Slider_ChangeCoefficient->GetValue());
+        Repaint();
     }
     else if (m_Chanel_choice->GetSelection() == 1)
     {
@@ -41,6 +42,8 @@ void ImageCorrectionsFrame::slider_ChangeCoefficientOnScroll(wxScrollEvent& even
     else if (m_Chanel_choice->GetSelection() == 2)
     {
         // Nasycenie
+        Saturation(m_Slider_ChangeCoefficient->GetValue() - 100);
+        Repaint();
     }
     else if (m_Chanel_choice->GetSelection() == 3)
     {
@@ -52,23 +55,13 @@ void ImageCorrectionsFrame::slider_ChangeCoefficientOnScroll(wxScrollEvent& even
 void ImageCorrectionsFrame::slider_MixImagesOnScroll(wxScrollEvent& event)
 {
     // TODO: Implement slider_MixImagesOnScroll
-
-    /*wxColor toChange(254, 0, 0);
-    wxColor newColor(0, 0, 255);
-    unsigned char toR = toChange.Red();
-    unsigned char toG = toChange.Green();
-    unsigned char toB = toChange.Blue();
-    unsigned char newR = newColor.Red();
-    unsigned char newG = newColor.Green();
-    unsigned char newB = newColor.Blue();
-    Img_Cpy.Replace(toR, toG, toB, newR, newG, newB);
-    Repaint();*/
+    Repaint();
 }
 
 void ImageCorrectionsFrame::menu_File_OpenOnMenuSelection(wxCommandEvent& event)
 {
     // TODO: Implement menu_File_OpenOnMenuSelection
-    std::shared_ptr<wxFileDialog> Dialog(new wxFileDialog(this, _("Otwórz"), _(""), _(""), _("JPEG files (*.jpg)|*.jpg"), wxFD_OPEN));
+    std::shared_ptr<wxFileDialog> Dialog(new wxFileDialog(this, _("Otwórz"), _(""), _(""), _("PNG files (*.png)|*.png|JPEG files (*.jpg)|*.jpg"), wxFD_OPEN));
     if (Dialog->ShowModal() == wxID_OK)
     {
         Img_Org.AddHandler(new wxJPEGHandler);
@@ -78,8 +71,10 @@ void ImageCorrectionsFrame::menu_File_OpenOnMenuSelection(wxCommandEvent& event)
         Img_Cpy.AddHandler(new wxPNGHandler);
         Img_Cpy.LoadFile(Dialog->GetPath());
     }
-    if (Img_Org.IsOk() && Img_Cpy.IsOk())
+    if (Img_Org.IsOk())
+    {
         Repaint();
+    }
 }
 
 void ImageCorrectionsFrame::menu_File_SaveOnMenuSelection(wxCommandEvent& event)
@@ -114,9 +109,9 @@ void ImageCorrectionsFrame::menu_About_InfoOnMenuSelection(wxCommandEvent& event
 void ImageCorrectionsFrame::Repaint()
 {
     wxBitmap bitmap(Img_Cpy);          // Tworzymy tymczasowa bitmape na podstawie Img_Cpy
-    wxClientDC dc(m_Image_Box);   // Pobieramy kontekst okna
+    wxClientDC dc(m_Image_Box);  // Pobieramy kontekst okna
     m_Image_Box->DoPrepareDC(dc); // Musimy wywolac w przypadku wxScrolledWindow, zeby suwaki prawidlowo dzialaly
-    dc.DrawBitmap(bitmap, 0, 0, true); // Rysujemy bitmape na kontekscie urzadzenia
+    dc.DrawBitmap(bitmap, 0, 0, false); // Rysujemy bitmape na kontekscie urzadzenia
 }
 
 void ImageCorrectionsFrame::Contrast(int value)
@@ -144,13 +139,13 @@ void ImageCorrectionsFrame::Brightness(int value)
 {
     Img_Cpy = Img_Org.Copy();
     int size = Img_Org.GetWidth() * Img_Org.GetHeight() * 3;
-    unsigned char* Img_data = Img_Cpy.GetData();
+    unsigned char* Img_Data = Img_Cpy.GetData();
 
     int temp;
 
     for (int i = 0; i < size; i++)
     {
-        temp = Img_data[i] + value;
+        temp = Img_Data[i] + value;
 
         if (temp > 255)
         {
@@ -161,6 +156,38 @@ void ImageCorrectionsFrame::Brightness(int value)
             temp = 0;
         }
 
-        Img_data[i] = temp;
+        Img_Data[i] = temp;
     }
+}
+
+void ImageCorrectionsFrame::Barwa(int value)
+{
+    Img_Cpy = Img_Org.Copy();
+    int size = Img_Org.GetWidth() * Img_Org.GetHeight() * 3;
+    unsigned char* Img_Data = Img_Cpy.GetData();
+
+    int Rref = 227;
+    int Gref = 35;
+    int Bref = 34;
+    int Rmod = 34;
+    int Gmod = 35;
+    int Bmod = 227;
+
+    Img_Cpy.Replace(Rref, Gref, Bref, Rmod, Gmod, Bmod);
+
+    /*int Ru = (Rref / Rmod) * (double(value) / 200);
+    int Gu = (Gref / Gmod) * (double(value) / 200);
+    int Bu = (Bref / Bmod) * (double(value) / 200);*/
+
+    for (int i = 0; i < size; i += 3)
+    {
+        Img_Data[i] = (1 / fabs(Rref - Rmod)) * value * 1000;
+        Img_Data[i+1] = (1 / fabs(Gref - Gmod)) * value * 1000;
+        Img_Data[i+2] = (1 / fabs(Bref - Bmod)) * value * 1000;
+    }
+}
+
+void ImageCorrectionsFrame::Saturation(int value)
+{
+    
 }
