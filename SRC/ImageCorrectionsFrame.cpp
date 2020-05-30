@@ -42,7 +42,7 @@ void ImageCorrectionsFrame::slider_ChangeCoefficientOnScroll(wxScrollEvent& even
     else if (m_Chanel_choice->GetSelection() == 2)
     {
         // Nasycenie
-        Saturation(m_Slider_ChangeCoefficient->GetValue() - 100);
+        Saturation(m_Slider_ChangeCoefficient->GetValue());
         Repaint();
     }
     else if (m_Chanel_choice->GetSelection() == 3)
@@ -61,6 +61,7 @@ void ImageCorrectionsFrame::slider_MixImagesOnScroll(wxScrollEvent& event)
 void ImageCorrectionsFrame::menu_File_OpenOnMenuSelection(wxCommandEvent& event)
 {
     // TODO: Implement menu_File_OpenOnMenuSelection
+    m_Image_Box->ClearBackground();
     std::shared_ptr<wxFileDialog> Dialog(new wxFileDialog(this, _("Otwórz"), _(""), _(""), _("PNG files (*.png)|*.png|JPEG files (*.jpg)|*.jpg"), wxFD_OPEN));
     if (Dialog->ShowModal() == wxID_OK)
     {
@@ -174,21 +175,46 @@ void ImageCorrectionsFrame::Barwa(int value)
     int Gmod = 35;
     int Bmod = 227;
 
-    Img_Cpy.Replace(Rref, Gref, Bref, Rmod, Gmod, Bmod);
-
-    /*int Ru = (Rref / Rmod) * (double(value) / 200);
-    int Gu = (Gref / Gmod) * (double(value) / 200);
-    int Bu = (Bref / Bmod) * (double(value) / 200);*/
+    Img_Cpy.Replace(Rref, Gref, Bref, Rmod * value / 200, Gmod * value / 200, Bmod * value / 200);
 
     for (int i = 0; i < size; i += 3)
     {
-        /*Img_Data[i] = (1 / fabs(Rref - Rmod)) * value * 1000;
-        Img_Data[i+1] = (1 / fabs(Gref - Gmod)) * value * 1000;
-        Img_Data[i+2] = (1 / fabs(Bref - Bmod)) * value * 1000;*/
+        if (Img_Data[i] != Rmod && Img_Data[i + 1] != Gmod && Img_Data[i + 2] != Bmod)
+        {
+
+        }
     }
 }
 
 void ImageCorrectionsFrame::Saturation(int value)
 {
-    
+    Img_Cpy = Img_Org.Copy();
+    int size = Img_Org.GetWidth() * Img_Org.GetHeight() * 3;
+    unsigned char* Img_Data = Img_Cpy.GetData();
+
+    for (int i = 0; i < size; i += 3)
+    {
+        Img_RGB.red = Img_Data[i];
+        Img_RGB.green = Img_Data[i + 1];
+        Img_RGB.blue = Img_Data[i + 2];
+
+        Img_HSV = wxImage::RGBtoHSV(Img_RGB);
+
+        Img_HSV.saturation = Img_HSV.saturation + double(value) / 200;
+
+        if (Img_HSV.saturation > 1.0)
+        {
+            Img_HSV.saturation = 1.0;
+        }
+        else if (Img_HSV.saturation < 0.0)
+        {
+            Img_HSV.saturation = 0.0;
+        }
+
+        Img_RGB = wxImage::HSVtoRGB(Img_HSV);
+
+        Img_Data[i] = Img_RGB.red;
+        Img_Data[i + 1] = Img_RGB.green;
+        Img_Data[i + 2] = Img_RGB.blue;
+    }
 }
