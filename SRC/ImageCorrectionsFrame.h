@@ -43,6 +43,8 @@ public:
 private:
 	wxImage Img_Org, // original image
 		Img_Cpy; // copy image
+	wxImage::HSVValue Img_HSV;
+	wxImage::RGBValue Img_RGB;
 
 
 };
