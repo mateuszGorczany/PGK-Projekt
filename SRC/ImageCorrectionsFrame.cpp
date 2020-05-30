@@ -82,7 +82,6 @@ void ImageCorrectionsFrame::menu_File_SaveOnMenuSelection(wxCommandEvent& event)
     // TODO: Implement menu_File_SaveOnMenuSelection
     if (Img_Cpy.IsOk())
     {
-        Repaint();
         std::shared_ptr<wxFileDialog> Dialog(new wxFileDialog(this, _("Zapisz"), _(""), _(""), _("JPEG files (*.jpg)|*.jpg"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT));
         if (Dialog->ShowModal() == wxID_OK)
         {
@@ -91,7 +90,6 @@ void ImageCorrectionsFrame::menu_File_SaveOnMenuSelection(wxCommandEvent& event)
             //m_Image = m_Bitmap.ConvertToImage();
             Img_Cpy.SaveFile(Dialog->GetPath());
         }
-        Repaint();
     }
 }
 
@@ -108,10 +106,13 @@ void ImageCorrectionsFrame::menu_About_InfoOnMenuSelection(wxCommandEvent& event
 
 void ImageCorrectionsFrame::Repaint()
 {
-    wxBitmap bitmap(Img_Cpy);          // Tworzymy tymczasowa bitmape na podstawie Img_Cpy
-    wxClientDC dc(m_Image_Box);  // Pobieramy kontekst okna
-    m_Image_Box->DoPrepareDC(dc); // Musimy wywolac w przypadku wxScrolledWindow, zeby suwaki prawidlowo dzialaly
-    dc.DrawBitmap(bitmap, 0, 0, false); // Rysujemy bitmape na kontekscie urzadzenia
+    if (Img_Cpy.IsOk())
+    {
+        wxBitmap bitmap(Img_Cpy);          // Tworzymy tymczasowa bitmape na podstawie Img_Cpy
+        wxClientDC dc(m_Image_Box);  // Pobieramy kontekst okna
+        m_Image_Box->DoPrepareDC(dc); // Musimy wywolac w przypadku wxScrolledWindow, zeby suwaki prawidlowo dzialaly
+        dc.DrawBitmap(bitmap, 0, 0, false); // Rysujemy bitmape na kontekscie urzadzenia
+    }
 }
 
 void ImageCorrectionsFrame::Contrast(int value)
@@ -181,9 +182,9 @@ void ImageCorrectionsFrame::Barwa(int value)
 
     for (int i = 0; i < size; i += 3)
     {
-        Img_Data[i] = (1 / fabs(Rref - Rmod)) * value * 1000;
+        /*Img_Data[i] = (1 / fabs(Rref - Rmod)) * value * 1000;
         Img_Data[i+1] = (1 / fabs(Gref - Gmod)) * value * 1000;
-        Img_Data[i+2] = (1 / fabs(Bref - Bmod)) * value * 1000;
+        Img_Data[i+2] = (1 / fabs(Bref - Bmod)) * value * 1000;*/
     }
 }
 
