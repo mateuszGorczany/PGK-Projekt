@@ -31,7 +31,7 @@ void ImageCorrectionsFrame::slider_ChangeCoefficientOnScroll(wxScrollEvent& even
     // TODO: Implement slider_ChangeCoefficientOnScroll
     if (m_Chanel_choice->GetSelection() == 0)
     {
-        Barwa(m_Slider_ChangeCoefficient->GetValue());
+        Tone(m_Slider_ChangeCoefficient->GetValue());
         Repaint();
     }
     else if (m_Chanel_choice->GetSelection() == 1)
@@ -42,7 +42,7 @@ void ImageCorrectionsFrame::slider_ChangeCoefficientOnScroll(wxScrollEvent& even
     else if (m_Chanel_choice->GetSelection() == 2)
     {
         // Nasycenie
-        Saturation(m_Slider_ChangeCoefficient->GetValue());
+        Saturation(m_Slider_ChangeCoefficient->GetValue() - 100);
         Repaint();
     }
     else if (m_Chanel_choice->GetSelection() == 3)
@@ -162,7 +162,7 @@ void ImageCorrectionsFrame::Brightness(int value)
     }
 }
 
-void ImageCorrectionsFrame::Barwa(int value)
+void ImageCorrectionsFrame::Tone(int value)
 {
     Img_Cpy = Img_Org.Copy();
     int size = Img_Org.GetWidth() * Img_Org.GetHeight() * 3;
@@ -200,15 +200,21 @@ void ImageCorrectionsFrame::Saturation(int value)
 
         Img_HSV = wxImage::RGBtoHSV(Img_RGB);
 
-        Img_HSV.saturation = Img_HSV.saturation + double(value) / 200;
-
-        if (Img_HSV.saturation > 1.0)
+        if (value < 0)
         {
-            Img_HSV.saturation = 1.0;
+            Img_HSV.saturation = Img_HSV.saturation - fabs(double(value) / 100);
+            if (Img_HSV.saturation < 0.0)
+            {
+                Img_HSV.saturation = 0.0;
+            }
         }
-        else if (Img_HSV.saturation < 0.0)
+        else if (value >= 0)
         {
-            Img_HSV.saturation = 0.0;
+            Img_HSV.saturation = Img_HSV.saturation + double(value) / 100;
+            if (Img_HSV.saturation > 1.0)
+            {
+                Img_HSV.saturation = 1.0;
+            }
         }
 
         Img_RGB = wxImage::HSVtoRGB(Img_HSV);
