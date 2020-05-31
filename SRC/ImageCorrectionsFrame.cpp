@@ -188,39 +188,36 @@ void ImageCorrectionsFrame::Tone(int value)
 
 void ImageCorrectionsFrame::Saturation(int value)
 {
-    Img_Cpy = Img_Org.Copy();
-    int size = Img_Org.GetWidth() * Img_Org.GetHeight() * 3;
-    unsigned char* Img_Data = Img_Cpy.GetData();
-
-    for (int i = 0; i < size; i += 3)
+    for (int i = 0; i < Img_Org.GetHeight(); ++i)
     {
-        Img_RGB.red = Img_Data[i];
-        Img_RGB.green = Img_Data[i + 1];
-        Img_RGB.blue = Img_Data[i + 2];
-
-        Img_HSV = wxImage::RGBtoHSV(Img_RGB);
-
-        if (value < 0)
+        for (int j = 0; j < Img_Org.GetWidth(); ++j)
         {
-            Img_HSV.saturation = Img_HSV.saturation - fabs(double(value) / 100);
-            if (Img_HSV.saturation < 0.0)
-            {
-                Img_HSV.saturation = 0.0;
-            }
-        }
-        else if (value >= 0)
-        {
-            Img_HSV.saturation = Img_HSV.saturation + double(value) / 100;
-            if (Img_HSV.saturation > 1.0)
-            {
-                Img_HSV.saturation = 1.0;
-            }
-        }
+            Img_RGB.red = Img_Org.GetRed(i, j);
+            Img_RGB.green = Img_Org.GetGreen(i, j);
+            Img_RGB.blue = Img_Org.GetBlue(i, j);
 
-        Img_RGB = wxImage::HSVtoRGB(Img_HSV);
+            Img_HSV = wxImage::RGBtoHSV(Img_RGB);
 
-        Img_Data[i] = Img_RGB.red;
-        Img_Data[i + 1] = Img_RGB.green;
-        Img_Data[i + 2] = Img_RGB.blue;
+            if (value < 0)
+            {
+                Img_HSV.saturation = Img_HSV.saturation - fabs(double(value) / 100);
+                if (Img_HSV.saturation < 0.0)
+                {
+                    Img_HSV.saturation = 0.0;
+                }
+            }
+            else if (value >= 0)
+            {
+                Img_HSV.saturation = Img_HSV.saturation + double(value) / 100;
+                if (Img_HSV.saturation > 1.0)
+                {
+                    Img_HSV.saturation = 1.0;
+                }
+            }
+
+            Img_RGB = wxImage::HSVtoRGB(Img_HSV);
+
+            Img_Cpy.SetRGB(i, j, Img_RGB.red, Img_RGB.green, Img_RGB.blue);
+        }
     }
 }
