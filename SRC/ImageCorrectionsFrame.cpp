@@ -119,8 +119,8 @@ void ImageCorrectionsFrame::Repaint()
         wxClientDC dc(m_Image_Box);  // Pobieramy kontekst okna
         m_Image_Box->DoPrepareDC(dc); // Musimy wywolac w przypadku wxScrolledWindow, zeby suwaki prawidlowo dzialaly
         dc.DrawBitmap(bitmap, 0, 0, false); // Rysujemy bitmape na kontekscie urzadzenia
+        Repaint_picker();
     }
-    Repaint_picker();
 }
 
 void ImageCorrectionsFrame::Repaint_picker()
@@ -241,25 +241,25 @@ constexpr void ImageCorrectionsFrame::fill_hexagon(
     }
 
     const double ratio_h = height / (4. * 108);
-    for (unsigned int y = 3*height / 4; y < height; ++y)
+    for (unsigned int y = 3 * height / 4; y < height; ++y)
     {
-        unsigned int h{ y - 3*height / 4};
+        unsigned int h{ y - 3 * height / 4 };
         for (int x = 125; x < 125 + (108 - h * ratio); ++x)
         {
             double f = x - 125.;
             double s = sqrt(3) * y;
             size_t base = (x + width * y) * 3;
-            data[base + 0] = color_ratio * ((108-f) * height / (4. * 108) - h);
+            data[base + 0] = color_ratio * ((108 - f) * height / (4. * 108) - h);
             data[base + 1] = 255;
-            data[base + 2] = 255 * (1 - f / (sin(M_PI/3.) * 125));
+            data[base + 2] = 255 * (1 - f / (sin(M_PI / 3.) * 125));
         }
         for (int x = 125; x >= 125 - (108 - h * ratio); --x)
         {
             double f = x - 17.;
             double s = sqrt(3) * y;
             size_t base = (x + width * y) * 3;
-            data[base + 0] = color_ratio * (f*ratio_h-h);
-            data[base + 1] = 255 * (f/(sin(M_PI/3.)* 125));
+            data[base + 0] = color_ratio * (f * ratio_h - h);
+            data[base + 1] = 255 * (f / (sin(M_PI / 3.) * 125));
             data[base + 2] = 255;
         }
     }
