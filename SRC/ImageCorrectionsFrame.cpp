@@ -171,17 +171,19 @@ void ImageCorrectionsFrame::Tone(int value)
     int Rref = 227;
     int Gref = 35;
     int Bref = 34;
-    int Rmod = 34;
-    int Gmod = 35;
-    int Bmod = 227;
+    int Rmod = 0;
+    int Gmod = 0;
+    int Bmod = 255;
 
-    Img_Cpy.Replace(Rref, Gref, Bref, Rmod * value / 200, Gmod * value / 200, Bmod * value / 200);
+    Img_Cpy.Replace(Rref, Gref, Bref, Rmod, Gmod, Bmod);
 
     for (int i = 0; i < size; i += 3)
     {
         if (Img_Data[i] != Rmod && Img_Data[i + 1] != Gmod && Img_Data[i + 2] != Bmod)
         {
-
+            Img_Data[i] = 1 / fabs(Img_Data[i] - Rmod) * Rref * value / 100;
+            Img_Data[i+1] = 1 / fabs(Img_Data[i+1] - Gmod) * Gref * value / 100;
+            Img_Data[i+2] = 1 / fabs(Img_Data[i+2] - Bmod) * Bref * value / 100;
         }
     }
 }
