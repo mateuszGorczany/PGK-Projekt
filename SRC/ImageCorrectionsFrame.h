@@ -43,8 +43,8 @@ public:
 
 private:
 	wxImage Img_Org, // original image
-		Img_Cpy; // copy image
-	wxBitmap m_picker_bitmap;
+		    Img_Cpy; // copy image
+	wxImage color_Picker;
 
 
 };
