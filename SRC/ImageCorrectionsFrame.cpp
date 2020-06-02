@@ -186,7 +186,7 @@ void ImageCorrectionsFrame::Repaint_picker()
 }
 
 
-void ImageCorrectionsFrame::fill_hexagon(
+constexpr void ImageCorrectionsFrame::fill_hexagon(
     unsigned char* data, 
     unsigned int height, 
     unsigned int width)
@@ -245,7 +245,7 @@ void ImageCorrectionsFrame::fill_hexagon(
             double f = x - 17;
             double s = (108 - f) * sqrt(3) / 3.;
             size_t base = (x + width * y) * 3;
-            data[base + 0] = color_ratio*(125 - h);//255 * ((height/4+s)/125);
+            data[base + 0] = color_ratio*(125 - h + f/tan(M_PI/3.));//255 * ((height/4+s)/125);
             data[base + 1] = 255 * (2.*sqrt(3)*f/(3.*125.));
             data[base + 2] = 255;
         }
@@ -254,7 +254,7 @@ void ImageCorrectionsFrame::fill_hexagon(
             double f = x - 125;
             double s = sqrt(3) * h;
             size_t base = (x + width * y) * 3;
-            data[base + 0] = color_ratio * (125-h);
+            data[base + 0] = color_ratio * (125 - h + (108-f)/tan(M_PI/3.));
             data[base + 1] = 255;
             data[base + 2] = 255 * (1-2 * sqrt(3) * f / (3*125));//255 * (1-sqrt(3)*f/186);
         }
@@ -267,11 +267,13 @@ void ImageCorrectionsFrame::fill_hexagon(
         for (int x = 17; x <= 125; ++x)
         {
             double f = x-17;
-            double s = (108 - f) * sqrt(3)/3.;
+            double s = height / 4 - h + f * tan(M_PI / 6.);
+            //double s =(108 - f) * sqrt(3)/3.;
             size_t base = (x + width * y) * 3;
             //if (x = 125);
-            data[base + 0] = 255*(1-(h+s)/125);
-            data[base + 1] = 255 * ( 2*sqrt(3) * f / (3*125));//color_ratio * tales * (s + f);
+            data[base + 0] = color_ratio * (height/4. - h + f/tan(M_PI/3.));//
+            //data[base + 0] = 255 * (1 - (h + s) / 125);
+            data[base + 1] = 255 * f / (cos(M_PI / 6.) * 125);//255 * (1 - (108-f) / (sin(M_PI / 6.) * 125));//255 * ( 2*sqrt(3) * f / (3*125));//color_ratio * tales * (s + f);
             data[base + 2] = 255;// color_ratio* tales* (s - f);
         }
         for (int x = 125; x <= 216+17; ++x)
@@ -292,7 +294,7 @@ void ImageCorrectionsFrame::fill_hexagon(
             double f = x - 125;
             double s = sqrt(3) * y;
             size_t base = (x + width * y) * 3;
-            data[base + 0] = 255*(h/125);
+            data[base + 0] = color_ratio * ((108-f) * height / (4. * 108) - h);
             data[base + 1] = 255;//color_ratio * tales * (s - f);
             data[base + 2] = 255 * (1 - f / (sin(M_PI/3.) * 125));
         }
@@ -301,7 +303,7 @@ void ImageCorrectionsFrame::fill_hexagon(
             double f = x - 17;
             double s = sqrt(3) * y;
             size_t base = (x + width * y) * 3;
-            data[base + 0] = 255 * (h/125);
+            data[base + 0] = color_ratio * (f*height/(4.*108)-h);
             data[base + 1] = 255 * (f/(sin(M_PI/3.)* 125));
             data[base + 2] = 255;// color_ratio* tales* (s - f);
         }

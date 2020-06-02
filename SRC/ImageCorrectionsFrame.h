@@ -39,7 +39,7 @@ public:
 	//// end generated class members
 	void Repaint();
 	void Repaint_picker();
-	void fill_hexagon(unsigned char*, unsigned int, unsigned int);
+	constexpr void fill_hexagon(unsigned char*, unsigned int, unsigned int);
 
 private:
 	wxImage Img_Org, // original image
