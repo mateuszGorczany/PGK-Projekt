@@ -16,6 +16,7 @@ IMPLEMENT_APP(MyApp);
 bool MyApp::OnInit()
 {
     wxFrame* mainFrame = new ImageCorrectionsFrame(NULL);
+    dynamic_cast<ImageCorrectionsFrame*>(mainFrame)->Repaint_picker();
     mainFrame->Show(true);
     SetTopWindow(mainFrame);
 

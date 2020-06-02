@@ -43,20 +43,20 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
 
-	wxString m_Chanel_choiceChoices[] = { wxT("Barwa"), wxT("Jasnosc"), wxT("Nasycenie"), wxT("Kontrast"), wxEmptyString };
+	wxString m_Chanel_choiceChoices[] = { wxT("Barwa"), wxT("Jasność"), wxT("Nasycenie"), wxT("Kontrast"), wxEmptyString };
 	int m_Chanel_choiceNChoices = sizeof( m_Chanel_choiceChoices ) / sizeof( wxString );
 	m_Chanel_choice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_Chanel_choiceNChoices, m_Chanel_choiceChoices, 0 );
 	m_Chanel_choice->SetSelection( 0 );
 	bSizer7->Add( m_Chanel_choice, 0, wxALIGN_CENTER|wxALL, 5 );
 
-	m_StaticText_ChangeCoefficient = new wxStaticText( this, wxID_ANY, wxT("Wspolczynnik zmian"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_StaticText_ChangeCoefficient = new wxStaticText( this, wxID_ANY, wxT("Współczynnik zmian"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_StaticText_ChangeCoefficient->Wrap( -1 );
 	bSizer7->Add( m_StaticText_ChangeCoefficient, 0, wxALIGN_CENTER|wxALL, 5 );
 
 	m_Slider_ChangeCoefficient = new wxSlider( this, wxID_ANY, 100, 0, 200, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
 	bSizer7->Add( m_Slider_ChangeCoefficient, 0, wxALIGN_CENTER|wxALL, 5 );
 
-	m_StaticText_MixImages = new wxStaticText( this, wxID_ANY, wxT("Mieszanie obrazow"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_StaticText_MixImages = new wxStaticText( this, wxID_ANY, wxT("Mieszanie obrazów"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_StaticText_MixImages->Wrap( -1 );
 	bSizer7->Add( m_StaticText_MixImages, 0, wxALIGN_CENTER|wxALL, 5 );
 
@@ -103,7 +103,8 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	this->Centre( wxBOTH );
 
 	// Connect Events
-	m_Color_Hexagon_Box->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( Frame::color_Hexagon_BoxOnLeftDClick ), NULL, this );
+	m_Color_Hexagon_Box->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( Frame::m_color_Hexagon_BoxOnLeftDClick ), NULL, this );
+	m_Color_Hexagon_Box->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( Frame::m_Color_Hexagon_BoxOnUpdateUI ), NULL, this );
 	m_Chanel_choice->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( Frame::chanel_choiceOnUpdateUI ), NULL, this );
 	m_Slider_ChangeCoefficient->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( Frame::slider_ChangeCoefficientOnScroll ), NULL, this );
 	m_Slider_ChangeCoefficient->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( Frame::slider_ChangeCoefficientOnScroll ), NULL, this );
@@ -132,7 +133,8 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 Frame::~Frame()
 {
 	// Disconnect Events
-	m_Color_Hexagon_Box->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( Frame::color_Hexagon_BoxOnLeftDClick ), NULL, this );
+	m_Color_Hexagon_Box->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( Frame::m_color_Hexagon_BoxOnLeftDClick ), NULL, this );
+	m_Color_Hexagon_Box->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( Frame::m_Color_Hexagon_BoxOnUpdateUI ), NULL, this );
 	m_Chanel_choice->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( Frame::chanel_choiceOnUpdateUI ), NULL, this );
 	m_Slider_ChangeCoefficient->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( Frame::slider_ChangeCoefficientOnScroll ), NULL, this );
 	m_Slider_ChangeCoefficient->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( Frame::slider_ChangeCoefficientOnScroll ), NULL, this );

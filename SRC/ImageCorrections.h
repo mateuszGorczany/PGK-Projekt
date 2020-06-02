@@ -49,7 +49,8 @@ class Frame : public wxFrame
 		wxMenu* menu_About;
 
 		// Virtual event handlers, overide them in your derived class
-		virtual void color_Hexagon_BoxOnLeftDClick( wxMouseEvent& event ) { event.Skip(); }
+		virtual void m_color_Hexagon_BoxOnLeftDClick( wxMouseEvent& event ) { event.Skip(); }
+		virtual void m_Color_Hexagon_BoxOnUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void chanel_choiceOnUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void slider_ChangeCoefficientOnScroll( wxScrollEvent& event ) { event.Skip(); }
 		virtual void slider_MixImagesOnScroll( wxScrollEvent& event ) { event.Skip(); }
@@ -61,8 +62,9 @@ class Frame : public wxFrame
 
 	public:
 
-		Frame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Korekty obrazow"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 865,639 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+		Frame( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("Korekty obrazów"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 865,639 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 
 		~Frame();
 
 };
+

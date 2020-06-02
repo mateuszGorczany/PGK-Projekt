@@ -6,6 +6,9 @@ ImageCorrectionsFrame::ImageCorrectionsFrame(wxWindow* parent)
 {
     m_Image_Box->SetScrollbars(20, 20, 50, 48);
     m_Image_Box->SetBackgroundColour(wxColor(192, 192, 192));
+    m_Color_Hexagon_Box->SetBackgroundColour(wxColor(192, 192, 192));
+    // 250 x 250
+    //Repaint_picker();
 }
 
 void ImageCorrectionsFrame::image_BoxOnUpdateUI(wxUpdateUIEvent& event)
@@ -16,8 +19,13 @@ void ImageCorrectionsFrame::image_BoxOnUpdateUI(wxUpdateUIEvent& event)
 
 void ImageCorrectionsFrame::color_Hexagon_BoxOnLeftDClick(wxMouseEvent& event)
 {
-    // TODO: Implement color_Hexagon_BoxOnLeftDClick
+     //TODO: Implement color_Hexagon_BoxOnLeftDClick
     Repaint();
+}
+
+void ImageCorrectionsFrame::m_Color_Hexagon_BoxOnUpdateUI(wxUpdateUIEvent& event)
+{
+    Repaint_picker();
 }
 
 void ImageCorrectionsFrame::chanel_choiceOnUpdateUI(wxUpdateUIEvent& event)
@@ -47,6 +55,7 @@ void ImageCorrectionsFrame::slider_ChangeCoefficientOnScroll(wxScrollEvent& even
         Contrast(m_Slider_ChangeCoefficient->GetValue() - 100);
         Repaint();
     }
+
 }
 
 void ImageCorrectionsFrame::slider_MixImagesOnScroll(wxScrollEvent& event)
@@ -117,6 +126,186 @@ void ImageCorrectionsFrame::Repaint()
     wxClientDC dc(m_Image_Box);   // Pobieramy kontekst okna
     m_Image_Box->DoPrepareDC(dc); // Musimy wywolac w przypadku wxScrolledWindow, zeby suwaki prawidlowo dzialaly
     dc.DrawBitmap(bitmap, 0, 0, true); // Rysujemy bitmape na kontekscie urzadzenia
+    Repaint_picker();
+}
+
+void ImageCorrectionsFrame::Repaint_picker()
+{
+    //wxBitmap bitmap(m_Color_Hexagon_Box);          // Tworzymy tymczasowa bitmape na podstawie Img_Cpy
+    wxClientDC dc(m_Color_Hexagon_Box);   // Pobieramy kontekst okna
+    //m_Image_Box->DoPrepareDC(dc); // Musimy wywolac w przypadku wxScrolledWindow, zeby suwaki prawidlowo dzialaly
+    //dc.DrawBitmap(bitmap, 0, 0, true); // Rysujemy bitmape na kontekscie urzadzenia
+    m_picker_bitmap = wxBitmap(m_Color_Hexagon_Box->GetSize().x, m_Color_Hexagon_Box->GetSize().y);
+    wxBufferedDC DC(&dc, m_picker_bitmap);
+
+    DC.Clear();
+    DC.SetBackground(wxColour(*wxWHITE));
+
+    DC.SetDeviceOrigin(m_Color_Hexagon_Box->GetSize().x / 2, m_Color_Hexagon_Box->GetSize().y / 2);
+
+
+
+    //wxPoint p[5] = { wxPoint(-80, -120), // gorny
+    //               wxPoint(-50,-60), // prawy dolny
+    //               wxPoint(-130,-100), // lewy gorny
+    //               wxPoint(-40,-100), // prawy gorny
+    //               wxPoint(-120,-60) // lewy dolny
+    //};
+    //DC.SetBrush(*wxBLACK_BRUSH);
+    DC.SetPen(*wxBLACK_PEN);
+    unsigned int width = m_Color_Hexagon_Box->GetSize().x;
+    unsigned int height = m_Color_Hexagon_Box->GetSize().y;
+    
+    //wxPoint p[6] = { 
+    //                 wxPoint(0, 125),
+    //                 wxPoint(108, 62),
+    //                 wxPoint(108, -62),
+    //                 wxPoint(0, -125), 
+    //                 wxPoint(-108, -62),
+    //                 wxPoint(-108, 62),
+    //};
+
+    //DC.DrawPolygon(6, p);
+
+    unsigned char* data = new unsigned char[250 * 250 * 3];
+
+
+    fill_hexagon(data, width, height);
+
+    wxImage Image  = wxImage(m_Color_Hexagon_Box->GetSize().x, m_Color_Hexagon_Box->GetSize().y, data, false);
+    wxBitmap Bitmap = wxBitmap(Image, -1);
+    DC.DrawBitmap(Bitmap, -125, -125, false);
+    //DC.DrawLine(0, -20, 0, 30);
+    /*DC.DrawCircle(-125, 72, 5);
+    DC.DrawCircle(-125, -72, 5);
+    DC.DrawCircle(125, 72, 5);
+    DC.DrawCircle(125, -72, 5);
+    DC.DrawCircle(0, 125, 5);
+    DC.DrawCircle(0, -125, 5);*/
+    //delete [] data;
+}
+
+
+void ImageCorrectionsFrame::fill_hexagon(
+    unsigned char* data, 
+    unsigned int height, 
+    unsigned int width)
+{
+    double ratio = 1.728;
+    double tales = 125 / 216.5;
+    double color_ratio = 2.04;
+    for (int y = 0; y < height / 4; ++y)
+    {
+        for (int x = 125; x < 125 + y * ratio; ++x)
+        {
+            double f = x - 125;
+            double s = sqrt(3) * y;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = 255;
+            data[base + 1] = color_ratio * tales * (s + f);
+            data[base + 2] = color_ratio * tales * (s - f);
+        }
+        for (int x = 125; x > 125 - y * ratio; --x)
+        {
+            double f = x - 125;
+            double s = sqrt(3) * y;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = 255;
+            data[base + 1] = color_ratio * tales * (s + f);
+            data[base + 2] = color_ratio * tales * (s - f);
+        }
+    }
+    for (int y = height/4; y < height/2; ++y)
+    {
+        unsigned int h{ y - height / 4 };
+        for (int x = 125; x < 125 + (108-h * ratio); ++x)
+        {
+            double f = x - 125;
+            double s = sqrt(3) * y;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = 255;
+            data[base + 1] = color_ratio * tales * (s + f);
+            data[base + 2] = color_ratio * tales * (s - f);
+        }
+        for (int x = 125; x > 125 - (108 - h * ratio); --x)
+        {
+            double f = x - 125;
+            double s = sqrt(3) * y;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = 255;
+            data[base + 1] = color_ratio * tales * (s + f);
+            data[base + 2] = color_ratio * tales * (s - f);
+        }
+    }
+    for (int y = height / 4; y < height /2; ++y)
+    {
+        unsigned int h{ y - height / 4 };
+        for (int x = 17; x < h * ratio + 17; ++x)
+        {
+            double f = x - 17;
+            double s = (108 - f) * sqrt(3) / 3.;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = color_ratio*(125 - h);//255 * ((height/4+s)/125);
+            data[base + 1] = 255 * (2.*sqrt(3)*f/(3.*125.));
+            data[base + 2] = 255;
+        }
+        for (int x = 216+17; x >= 216+17 - h * ratio; --x)
+        {
+            double f = x - 125;
+            double s = sqrt(3) * h;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = color_ratio * (125-h);
+            data[base + 1] = 255;
+            data[base + 2] = 255 * (1-2 * sqrt(3) * f / (3*125));//255 * (1-sqrt(3)*f/186);
+        }
+    }
+
+    constexpr double rr = 125. / 108.;
+    for (int y = height / 2; y < 3*height / 4; ++y)
+    {
+        unsigned int h{ y - height / 2 };
+        for (int x = 17; x <= 125; ++x)
+        {
+            double f = x-17;
+            double s = (108 - f) * sqrt(3)/3.;
+            size_t base = (x + width * y) * 3;
+            //if (x = 125);
+            data[base + 0] = 255*(1-(h+s)/125);
+            data[base + 1] = 255 * ( 2*sqrt(3) * f / (3*125));//color_ratio * tales * (s + f);
+            data[base + 2] = 255;// color_ratio* tales* (s - f);
+        }
+        for (int x = 125; x <= 216+17; ++x)
+        {
+            double f = x - 125;
+            double s = (f) * sqrt(3) / 3.;;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = 255*(1-(h+s)/125.);
+            data[base + 1] = 255;// color_ratio* tales* (s + f);
+            data[base + 2] = 255 * (2 * sqrt(3) *(108 - f) / (3 * 125));
+        }
+    }
+    for (int y = 3*height / 4; y < height; ++y)
+    {
+        unsigned int h{ y - 3*height / 4};
+        for (int x = 125; x < 125 + (108 - h * ratio); ++x)
+        {
+            double f = x - 125;
+            double s = sqrt(3) * y;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = 255*(h/125);
+            data[base + 1] = 255;//color_ratio * tales * (s - f);
+            data[base + 2] = 255 * (1 - f / (sin(M_PI/3.) * 125));
+        }
+        for (int x = 125; x >= 125 - (108 - h * ratio); --x)
+        {
+            double f = x - 17;
+            double s = sqrt(3) * y;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = 255 * (h/125);
+            data[base + 1] = 255 * (f/(sin(M_PI/3.)* 125));
+            data[base + 2] = 255;// color_ratio* tales* (s - f);
+        }
+    }
 }
 
 void ImageCorrectionsFrame::Contrast(int value)
