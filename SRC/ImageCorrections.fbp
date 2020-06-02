@@ -48,7 +48,7 @@
             <property name="size">865,639</property>
             <property name="style">wxDEFAULT_FRAME_STYLE</property>
             <property name="subclass">; ; forward_declare</property>
-            <property name="title">Korekty obrazow</property>
+            <property name="title">Korekty obrazów</property>
             <property name="tooltip"></property>
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
@@ -59,11 +59,11 @@
                 <property name="name">bSizer1</property>
                 <property name="orient">wxHORIZONTAL</property>
                 <property name="permission">none</property>
-                <object class="sizeritem" expanded="0">
+                <object class="sizeritem" expanded="1">
                     <property name="border">5</property>
                     <property name="flag">wxEXPAND</property>
                     <property name="proportion">1</property>
-                    <object class="wxBoxSizer" expanded="0">
+                    <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
                         <property name="name">bSizer3</property>
                         <property name="orient">wxVERTICAL</property>
@@ -202,7 +202,8 @@
                                         <property name="window_extra_style"></property>
                                         <property name="window_name"></property>
                                         <property name="window_style">wxTAB_TRAVERSAL</property>
-                                        <event name="OnLeftDClick">color_Hexagon_BoxOnLeftDClick</event>
+                                        <event name="OnLeftDClick">m_color_Hexagon_BoxOnLeftDClick</event>
+                                        <event name="OnUpdateUI">m_Color_Hexagon_BoxOnUpdateUI</event>
                                     </object>
                                 </object>
                             </object>
@@ -234,7 +235,7 @@
                                         <property name="caption"></property>
                                         <property name="caption_visible">1</property>
                                         <property name="center_pane">0</property>
-                                        <property name="choices">&quot;Barwa&quot; &quot;Jasnosc&quot; &quot;Nasycenie&quot; &quot;Kontrast&quot; &quot;&quot;</property>
+                                        <property name="choices">&quot;Barwa&quot; &quot;Jasność&quot; &quot;Nasycenie&quot; &quot;Kontrast&quot; &quot;&quot;</property>
                                         <property name="close_button">1</property>
                                         <property name="context_help"></property>
                                         <property name="context_menu">1</property>
@@ -313,7 +314,7 @@
                                         <property name="gripper">0</property>
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
-                                        <property name="label">Wspolczynnik zmian</property>
+                                        <property name="label">Współczynnik zmian</property>
                                         <property name="markup">0</property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
@@ -440,7 +441,7 @@
                                         <property name="gripper">0</property>
                                         <property name="hidden">0</property>
                                         <property name="id">wxID_ANY</property>
-                                        <property name="label">Mieszanie obrazow</property>
+                                        <property name="label">Mieszanie obrazów</property>
                                         <property name="markup">0</property>
                                         <property name="max_size"></property>
                                         <property name="maximize_button">0</property>
@@ -573,7 +574,7 @@
                         <property name="help"></property>
                         <property name="id">wxID_ANY</property>
                         <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">Otworz</property>
+                        <property name="label">Otwórz</property>
                         <property name="name">m_Menu_File_Open</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>
@@ -605,7 +606,7 @@
                         <property name="help"></property>
                         <property name="id">wxID_ANY</property>
                         <property name="kind">wxITEM_NORMAL</property>
-                        <property name="label">Wyjdz</property>
+                        <property name="label">Wyjdź</property>
                         <property name="name">m_Menu_File_Exit</property>
                         <property name="permission">none</property>
                         <property name="shortcut"></property>

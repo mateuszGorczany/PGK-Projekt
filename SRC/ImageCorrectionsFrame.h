@@ -23,6 +23,7 @@ protected:
 	// Handlers for Frame events.
 	void image_BoxOnUpdateUI(wxUpdateUIEvent& event);
 	void color_Hexagon_BoxOnLeftDClick(wxMouseEvent& event);
+	void m_Color_Hexagon_BoxOnUpdateUI(wxUpdateUIEvent& event);
 	void chanel_choiceOnUpdateUI(wxUpdateUIEvent& event);
 	void slider_ChangeCoefficientOnScroll(wxScrollEvent& event);
 	void slider_MixImagesOnScroll(wxScrollEvent& event);
@@ -39,12 +40,15 @@ public:
 	ImageCorrectionsFrame(wxWindow* parent);
 	//// end generated class members
 	void Repaint();
+	void Repaint_picker();
+	constexpr void fill_hexagon(unsigned char*, unsigned int, unsigned int);
 
 private:
 	wxImage Img_Org, // original image
-		Img_Cpy; // copy image
+		    Img_Cpy; // copy image
 	wxImage::HSVValue Img_HSV;
 	wxImage::RGBValue Img_RGB;
+	wxImage color_Picker;
 
 
 };

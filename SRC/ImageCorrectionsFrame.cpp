@@ -6,6 +6,7 @@ ImageCorrectionsFrame::ImageCorrectionsFrame(wxWindow* parent)
 {
     m_Image_Box->SetScrollbars(20, 20, 50, 48);
     m_Image_Box->SetBackgroundColour(wxColor(192, 192, 192));
+    m_Color_Hexagon_Box->SetBackgroundColour(wxColor(192, 192, 192));
 }
 
 void ImageCorrectionsFrame::image_BoxOnUpdateUI(wxUpdateUIEvent& event)
@@ -16,8 +17,13 @@ void ImageCorrectionsFrame::image_BoxOnUpdateUI(wxUpdateUIEvent& event)
 
 void ImageCorrectionsFrame::color_Hexagon_BoxOnLeftDClick(wxMouseEvent& event)
 {
-    // TODO: Implement color_Hexagon_BoxOnLeftDClick
+     //TODO: Implement color_Hexagon_BoxOnLeftDClick
     Repaint();
+}
+
+void ImageCorrectionsFrame::m_Color_Hexagon_BoxOnUpdateUI(wxUpdateUIEvent& event)
+{
+    Repaint_picker();
 }
 
 void ImageCorrectionsFrame::chanel_choiceOnUpdateUI(wxUpdateUIEvent& event)
@@ -50,6 +56,7 @@ void ImageCorrectionsFrame::slider_ChangeCoefficientOnScroll(wxScrollEvent& even
         Contrast(m_Slider_ChangeCoefficient->GetValue() - 100);
         Repaint();
     }
+
 }
 
 void ImageCorrectionsFrame::slider_MixImagesOnScroll(wxScrollEvent& event)
@@ -88,7 +95,6 @@ void ImageCorrectionsFrame::menu_File_SaveOnMenuSelection(wxCommandEvent& event)
         {
             Img_Cpy.AddHandler(new wxJPEGHandler);
             Img_Cpy.AddHandler(new wxPNGHandler);
-            //m_Image = m_Bitmap.ConvertToImage();
             Img_Cpy.SaveFile(Dialog->GetPath());
         }
     }
@@ -113,6 +119,149 @@ void ImageCorrectionsFrame::Repaint()
         wxClientDC dc(m_Image_Box);  // Pobieramy kontekst okna
         m_Image_Box->DoPrepareDC(dc); // Musimy wywolac w przypadku wxScrolledWindow, zeby suwaki prawidlowo dzialaly
         dc.DrawBitmap(bitmap, 0, 0, false); // Rysujemy bitmape na kontekscie urzadzenia
+    }
+    Repaint_picker();
+}
+
+void ImageCorrectionsFrame::Repaint_picker()
+{
+    unsigned int width = m_Color_Hexagon_Box->GetSize().x;
+    unsigned int height = m_Color_Hexagon_Box->GetSize().y;
+
+    unsigned char* data = new unsigned char[width * height * 3];
+    fill_hexagon(data, width, height);
+    color_Picker = wxImage(width, height, data, false);
+
+    wxBitmap m_picker_bitmap = wxBitmap(color_Picker, -1);
+    wxClientDC dc(m_Color_Hexagon_Box); 
+    wxBufferedDC DC(&dc, m_picker_bitmap);
+
+    DC.SetDeviceOrigin(width / 2, height / 2);
+}
+
+
+constexpr void ImageCorrectionsFrame::fill_hexagon(
+    unsigned char* data, 
+    unsigned int height, 
+    unsigned int width)
+{
+    constexpr double ratio = 1.728;
+    constexpr double tales = 125 / 216.5;
+    constexpr double color_ratio = 2.04;
+    for (unsigned int y = 0; y < height / 4; ++y)
+    {
+        for (unsigned int x = 125; x < 125 + y * ratio; ++x)
+        {
+            double f = x - 125.;
+            double s = sqrt(3) * y;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = 255;
+            data[base + 1] = color_ratio * tales * (s + f);
+            data[base + 2] = color_ratio * tales * (s - f);
+        }
+        for (int x = 125; x > 125 - y * ratio; --x)
+        {
+            double f = x - 125.;
+            double s = sqrt(3) * y;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = 255;
+            data[base + 1] = color_ratio * tales * (s + f);
+            data[base + 2] = color_ratio * tales * (s - f);
+        }
+    }
+    for (unsigned int y = height/4; y < height/2; ++y)
+    {
+        unsigned int h{ y - height / 4 };
+        for (unsigned int x = 125; x < 125 + (108-h * ratio); ++x)
+        {
+            double f = x - 125.;
+            double s = sqrt(3) * y;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = 255;
+            data[base + 1] = color_ratio * tales * (s + f);
+            data[base + 2] = color_ratio * tales * (s - f);
+        }
+        for (int x = 125; x > 125 - (108 - h * ratio); --x)
+        {
+            double f = x - 125.;
+            double s = sqrt(3) * y;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = 255;
+            data[base + 1] = color_ratio * tales * (s + f);
+            data[base + 2] = color_ratio * tales * (s - f);
+        }
+    }
+    
+    constexpr unsigned int width_h = 216 + 17;
+    for (unsigned int y = height / 4; y < height /2; ++y)
+    {
+        unsigned int h{ y - height / 4 };
+        for (unsigned int x = 17; x < h * ratio + 17; ++x)
+        {
+            double f = x - 17;
+            double s = (108 - f) * sqrt(3) / 3.;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = color_ratio*(125 - h + f/tan(M_PI/3.));
+            data[base + 1] = 255 * (2.*sqrt(3)*f/(3.*125.));
+            data[base + 2] = 255;
+        }
+        for (unsigned int x = 216+17; x >= width_h - h * ratio; --x)
+        {
+            double f = x - 125;
+            double s = sqrt(3) * h;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = color_ratio * (125 - h + (108-f)/tan(M_PI/3.));
+            data[base + 1] = 255;
+            data[base + 2] = 255 * (1-2 * sqrt(3) * f / (3*125.));
+        }
+    }
+
+    constexpr double rr = 125. / 108.;
+    for (unsigned int y = height / 2; y < 3*height / 4; ++y)
+    {
+        unsigned int h{ y - height / 2 };
+        for (unsigned int x = 17; x <= 125; ++x)
+        {
+            double f = x-17;
+            double s = height / 4 - h + f * tan(M_PI / 6.);
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = color_ratio * (height/4. - h + f/tan(M_PI/3.));
+            data[base + 1] = 255 * f / (cos(M_PI / 6.) * 125);
+            data[base + 2] = 255;
+        }
+        for (unsigned int x = 125; x <= 216+17; ++x)
+        {
+            double f = x - 125;
+            double s = (f) * sqrt(3) / 3.;;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = 255*(1-(h+s)/125.);
+            data[base + 1] = 255;
+            data[base + 2] = 255 * (2 * sqrt(3) *(108 - f) / (3 * 125.));
+        }
+    }
+
+    const double ratio_h = height / (4. * 108);
+    for (unsigned int y = 3*height / 4; y < height; ++y)
+    {
+        unsigned int h{ y - 3*height / 4};
+        for (int x = 125; x < 125 + (108 - h * ratio); ++x)
+        {
+            double f = x - 125.;
+            double s = sqrt(3) * y;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = color_ratio * ((108-f) * height / (4. * 108) - h);
+            data[base + 1] = 255;
+            data[base + 2] = 255 * (1 - f / (sin(M_PI/3.) * 125));
+        }
+        for (int x = 125; x >= 125 - (108 - h * ratio); --x)
+        {
+            double f = x - 17.;
+            double s = sqrt(3) * y;
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = color_ratio * (f*ratio_h-h);
+            data[base + 1] = 255 * (f/(sin(M_PI/3.)* 125));
+            data[base + 2] = 255;
+        }
     }
 }
 
