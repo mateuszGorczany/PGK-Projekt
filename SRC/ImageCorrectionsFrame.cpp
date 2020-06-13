@@ -1,30 +1,68 @@
 #include "ImageCorrectionsFrame.h"
 
 ImageCorrectionsFrame::ImageCorrectionsFrame(wxWindow* parent)
-    :
-    Frame(parent)
+    : 
+    Frame(parent),
+    m_color_picker_mouse_position{125,125}
 {
     m_Image_Box->SetScrollbars(20, 20, 50, 48);
     m_Image_Box->SetBackgroundColour(wxColor(192, 192, 192));
     m_Color_Hexagon_Box->SetBackgroundColour(wxColor(192, 192, 192));
 
     Initialize_Color_Buttons(wxColour("White"), wxSize{ 64, 32 });
+    Initialize_picker();
 }
 
 void ImageCorrectionsFrame::image_BoxOnUpdateUI(wxUpdateUIEvent& event)
 {
-    // TODO: Implement image_BoxOnUpdateUI
-    //event.GetPosition();
     Repaint();
 }
 
 void ImageCorrectionsFrame::color_Hexagon_BoxOnLeftDClick(wxMouseEvent& event)
 {
-     //TODO: Implement color_Hexagon_BoxOnLeftDClick
-    //wxPoint x = event.GetPosition();
     wxPoint x =wxWindow::ClientToScreen(event.GetPosition());
     Repaint();
 }
+
+void ImageCorrectionsFrame::m_pickedColourButtonOnButtonClick(wxCommandEvent& event)
+{
+    Img_Cpy.Replace(m_changed_colorButton_color.GetRed(5, 5),
+        m_changed_colorButton_color.GetGreen(5, 5),
+        m_changed_colorButton_color.GetBlue(5, 5),
+        m_picked_colorButton_color.GetRed(5, 5),
+        m_picked_colorButton_color.GetGreen(5, 5),
+        m_picked_colorButton_color.GetBlue(5, 5));
+}
+
+void ImageCorrectionsFrame::m_Image_BoxOnLeftDown(wxMouseEvent& event)
+{
+    if (!Img_Org.IsOk())
+        return;
+    wxPoint position = event.GetPosition();
+    Change_button_color(m_changedColourButton,
+        m_changed_colorButton_color,
+        wxColour{ Img_Cpy.GetRed(position.x,
+                                      position.y),
+                  Img_Cpy.GetGreen(position.x,
+                                        position.y),
+                  Img_Cpy.GetBlue(position.x,
+                                       position.y) });
+}
+
+void ImageCorrectionsFrame::m_Color_Hexagon_BoxOnLeftDown(wxMouseEvent& event)
+{
+
+    m_color_picker_mouse_position = event.GetPosition();
+    Change_button_color(m_pickedColourButton,
+                        m_picked_colorButton_color, 
+                        wxColour{ color_Picker.GetRed(m_color_picker_mouse_position.x,
+                                                      m_color_picker_mouse_position.y),
+                                  color_Picker.GetGreen(m_color_picker_mouse_position.x,
+                                                        m_color_picker_mouse_position.y),
+                                  color_Picker.GetBlue(m_color_picker_mouse_position.x,
+                                                       m_color_picker_mouse_position.y) });
+}
+
 
 void ImageCorrectionsFrame::m_Color_Hexagon_BoxOnUpdateUI(wxUpdateUIEvent& event)
 {
@@ -33,13 +71,11 @@ void ImageCorrectionsFrame::m_Color_Hexagon_BoxOnUpdateUI(wxUpdateUIEvent& event
 
 void ImageCorrectionsFrame::chanel_choiceOnUpdateUI(wxUpdateUIEvent& event)
 {
-    // TODO: Implement chanel_choiceOnUpdateUI
     Repaint();
 }
 
 void ImageCorrectionsFrame::slider_ChangeCoefficientOnScroll(wxScrollEvent& event)
 {
-    // TODO: Implement slider_ChangeCoefficientOnScroll
     if (m_Chanel_choice->GetSelection() == 0)
     {
         Tone(m_Slider_ChangeCoefficient->GetValue());
@@ -66,13 +102,11 @@ void ImageCorrectionsFrame::slider_ChangeCoefficientOnScroll(wxScrollEvent& even
 
 void ImageCorrectionsFrame::slider_MixImagesOnScroll(wxScrollEvent& event)
 {
-    // TODO: Implement slider_MixImagesOnScroll
     Repaint();
 }
 
 void ImageCorrectionsFrame::menu_File_OpenOnMenuSelection(wxCommandEvent& event)
 {
-    // TODO: Implement menu_File_OpenOnMenuSelection
     m_Image_Box->ClearBackground();
     std::shared_ptr<wxFileDialog> Dialog(new wxFileDialog(this, _("Otwórz"), _(""), _(""), _("PNG files (*.png)|*.png|JPEG files (*.jpg)|*.jpg"), wxFD_OPEN));
     if (Dialog->ShowModal() == wxID_OK)
@@ -92,7 +126,6 @@ void ImageCorrectionsFrame::menu_File_OpenOnMenuSelection(wxCommandEvent& event)
 
 void ImageCorrectionsFrame::menu_File_SaveOnMenuSelection(wxCommandEvent& event)
 {
-    // TODO: Implement menu_File_SaveOnMenuSelection
     if (Img_Cpy.IsOk())
     {
         std::shared_ptr<wxFileDialog> Dialog(new wxFileDialog(this, _("Zapisz"), _(""), _(""), _("JPEG files (*.jpg)|*.jpg"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT));
@@ -107,13 +140,11 @@ void ImageCorrectionsFrame::menu_File_SaveOnMenuSelection(wxCommandEvent& event)
 
 void ImageCorrectionsFrame::menu_File_ExitOnMenuSelection(wxCommandEvent& event)
 {
-    // TODO: Implement menu_File_ExitOnMenuSelection
     Destroy();
 }
 
 void ImageCorrectionsFrame::menu_About_InfoOnMenuSelection(wxCommandEvent& event)
 {
-    // TODO: Implement menu_About_InfoOnMenuSelection
 }
 
 void ImageCorrectionsFrame::Repaint()
@@ -124,11 +155,10 @@ void ImageCorrectionsFrame::Repaint()
         wxClientDC dc(m_Image_Box);  // Pobieramy kontekst okna
         m_Image_Box->DoPrepareDC(dc); // Musimy wywolac w przypadku wxScrolledWindow, zeby suwaki prawidlowo dzialaly
         dc.DrawBitmap(bitmap, 0, 0, false); // Rysujemy bitmape na kontekscie urzadzenia
-        Repaint_picker();
     }
 }
 
-void ImageCorrectionsFrame::Repaint_picker()
+void ImageCorrectionsFrame::Initialize_picker()
 {
     unsigned int width = m_Color_Hexagon_Box->GetSize().x;
     unsigned int height = m_Color_Hexagon_Box->GetSize().y;
@@ -136,14 +166,17 @@ void ImageCorrectionsFrame::Repaint_picker()
     unsigned char* data = new unsigned char[width * height * 3];
     fill_hexagon(data, width, height);
     color_Picker = wxImage(width, height, data, false);
-
-    wxBitmap m_picker_bitmap = wxBitmap(color_Picker, -1);
-    wxClientDC dc(m_Color_Hexagon_Box); 
-    wxBufferedDC DC(&dc, m_picker_bitmap);
-
-    DC.SetDeviceOrigin(width / 2, height / 2);
 }
 
+void ImageCorrectionsFrame::Repaint_picker()
+{
+    wxBitmap m_picker_bitmap = wxBitmap(color_Picker, -1);
+    wxClientDC dc(m_Color_Hexagon_Box);
+    wxBufferedDC DC(&dc, m_picker_bitmap);
+
+    DC.SetBrush(*wxGREY_BRUSH);
+    DC.DrawCircle(m_color_picker_mouse_position, 3);
+}
 
 constexpr void ImageCorrectionsFrame::fill_hexagon(
     unsigned char* data, 
@@ -417,7 +450,7 @@ void ImageCorrectionsFrame::Initialize_Color_Buttons(const wxColour &init_color,
     m_changedColourButton->SetBitmap(wxBitmap{ m_changed_colorButton_color });
 }
 
-void ImageCorrectionsFrame::Change_button_colour(wxImage &image, const wxColour &color)
+void ImageCorrectionsFrame::Change_button_color(wxBitmapButton *button, wxImage &image, const wxColour &color)
 {
     const int width{ image.GetSize().GetWidth() };
     const int height{ image.GetSize().GetHeight() };
@@ -426,9 +459,7 @@ void ImageCorrectionsFrame::Change_button_colour(wxImage &image, const wxColour 
     const unsigned char G = color.Green();
     const unsigned char B = color.Blue();
 
-    unsigned char* data = new unsigned char[width * height * 3];
-    unsigned char* data2 = new unsigned char[width * height * 3];
-
+    unsigned char* data = image.GetData();
 
     for (int x = 0; x < width; ++x)
     {
@@ -440,4 +471,6 @@ void ImageCorrectionsFrame::Change_button_colour(wxImage &image, const wxColour 
             data[base + 2] = B;
         }
     }
+    button->SetBitmap(wxBitmap{ image });
 }
+

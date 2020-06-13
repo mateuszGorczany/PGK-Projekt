@@ -32,6 +32,9 @@ public:
 	Służy do rysowania hexagonu kolorów
 	*/
 	void Repaint_picker();
+	void Draw_mouse_position_on_color_picker(const wxPoint& position);
+
+	void Initialize_picker();
 	/**
 	Służy do rysowania hexagonu kolorów
 	\param data przechowuje dane RGB pikseli hexagonu
@@ -44,6 +47,10 @@ public:
     unsigned int width);
 		
 protected:
+	void m_Image_BoxOnLeftDown(wxMouseEvent& event) override final;
+	void m_Color_Hexagon_BoxOnLeftDown(wxMouseEvent& event) override final;
+
+
 	/**
 	Odświeżanie
 	*/
@@ -107,7 +114,9 @@ protected:
 
 	void Initialize_Color_Buttons(const wxColour &, const wxSize &);
 
-	void Change_button_colour(wxImage &, const wxColour &color);
+	void Change_button_color(wxBitmapButton*, wxImage &, const wxColour &color);
+
+	void m_pickedColourButtonOnButtonClick(wxCommandEvent& event) override final;
 
 private:
 	/**
@@ -130,9 +139,12 @@ private:
 	Przechowuje hexagon kolorów
 	*/
 	wxImage color_Picker;
+	wxPoint m_color_picker_mouse_position;
+	wxPoint m_image_mouse_position;
 
 	wxImage m_picked_colorButton_color;
 	wxImage m_changed_colorButton_color;
+
 
 };
 
