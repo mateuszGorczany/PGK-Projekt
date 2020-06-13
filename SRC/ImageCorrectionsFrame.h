@@ -126,7 +126,8 @@ private:
 	/**
 	Przechowuje modyfikowany obrazek
 	*/
-	wxImage	Img_Cpy; 
+	wxImage	Img_Cpy;
+	//wxImage Edited_Image;
 	/**
 	Przechowuje wartości HSV piksela
 	*/

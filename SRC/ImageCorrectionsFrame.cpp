@@ -355,14 +355,13 @@ void ImageCorrectionsFrame::Tone(int value)
     int size = Img_Org.GetWidth() * Img_Org.GetHeight() * 3;
     unsigned char* Img_Data = Img_Cpy.GetData();
 
-    int Rref = 227;
-    int Gref = 35;
-    int Bref = 34;
-    int Rmod = 0;
-    int Gmod = 0;
-    int Bmod = 255;
+    int Rref = m_picked_colorButton_color.GetRed(5,5);
+    int Gref = m_picked_colorButton_color.GetGreen(5, 5);
+    int Bref = m_picked_colorButton_color.GetBlue(5, 5);
+    int Rmod = m_changed_colorButton_color.GetRed(5, 5);
+    int Gmod = m_changed_colorButton_color.GetGreen(5, 5);
+    int Bmod = m_changed_colorButton_color.GetBlue(5, 5);
 
-    Img_Cpy.Replace(Rref, Gref, Bref, Rmod, Gmod, Bmod);
 
     for (int i = 0; i < size; i += 3)
     {
@@ -373,6 +372,8 @@ void ImageCorrectionsFrame::Tone(int value)
             Img_Data[i+2] = 1 / fabs(Img_Data[i+2] - Bmod) * Bref * value / 100;
         }
     }
+    Img_Cpy.Replace(Rmod, Gmod, Bmod, Rref, Gref, Bref);
+    Repaint();
 }
 
 void ImageCorrectionsFrame::Saturation(int value)
