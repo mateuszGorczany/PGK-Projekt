@@ -17,12 +17,14 @@
 #include <wx/string.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
-#include <wx/choice.h>
-#include <wx/stattext.h>
-#include <wx/slider.h>
+#include <wx/bmpbuttn.h>
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
+#include <wx/button.h>
+#include <wx/stattext.h>
+#include <wx/choice.h>
+#include <wx/slider.h>
 #include <wx/menu.h>
 #include <wx/frame.h>
 
@@ -39,6 +41,10 @@ class Frame : public wxFrame
 	protected:
 		wxScrolledWindow* m_Image_Box;
 		wxPanel* m_Color_Hexagon_Box;
+		wxBitmapButton* m_changedColourButton;
+		wxStaticText* m_staticText4;
+		wxBitmapButton* m_pickedColourButton;
+		wxStaticText* m_staticText3;
 		wxChoice* m_Chanel_choice;
 		wxStaticText* m_StaticText_ChangeCoefficient;
 		wxSlider* m_Slider_ChangeCoefficient;
@@ -49,8 +55,12 @@ class Frame : public wxFrame
 		wxMenu* menu_About;
 
 		// Virtual event handlers, overide them in your derived class
+		virtual void m_Image_BoxOnLeftDown( wxMouseEvent& event ) { event.Skip(); }
 		virtual void m_color_Hexagon_BoxOnLeftDClick( wxMouseEvent& event ) { event.Skip(); }
+		virtual void m_Color_Hexagon_BoxOnLeftDown( wxMouseEvent& event ) { event.Skip(); }
 		virtual void m_Color_Hexagon_BoxOnUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
+		virtual void m_changedColourButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void m_pickedColourButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void chanel_choiceOnUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
 		virtual void slider_ChangeCoefficientOnScroll( wxScrollEvent& event ) { event.Skip(); }
 		virtual void slider_MixImagesOnScroll( wxScrollEvent& event ) { event.Skip(); }

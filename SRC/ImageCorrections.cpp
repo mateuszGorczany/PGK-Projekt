@@ -37,6 +37,38 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 
 	bSizer6->Add( m_Color_Hexagon_Box, 1, wxALL|wxSHAPED, 5 );
 
+	wxBoxSizer* bSizer61;
+	bSizer61 = new wxBoxSizer( wxHORIZONTAL );
+
+	wxBoxSizer* bSizer9;
+	bSizer9 = new wxBoxSizer( wxVERTICAL );
+
+	m_changedColourButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW|0 );
+	bSizer9->Add( m_changedColourButton, 0, wxALIGN_CENTER, 5 );
+
+	m_staticText4 = new wxStaticText( this, wxID_ANY, wxT("Zimeniany kolor"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText4->Wrap( -1 );
+	bSizer9->Add( m_staticText4, 0, wxALIGN_CENTER|wxALL, 5 );
+
+
+	bSizer61->Add( bSizer9, 1, 0, 5 );
+
+	wxBoxSizer* bSizer10;
+	bSizer10 = new wxBoxSizer( wxVERTICAL );
+
+	m_pickedColourButton = new wxBitmapButton( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW|0 );
+	bSizer10->Add( m_pickedColourButton, 0, wxALIGN_CENTER, 5 );
+
+	m_staticText3 = new wxStaticText( this, wxID_ANY, wxT("Wybrany kolor"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText3->Wrap( -1 );
+	bSizer10->Add( m_staticText3, 0, wxALIGN_CENTER|wxALL, 5 );
+
+
+	bSizer61->Add( bSizer10, 1, wxEXPAND, 5 );
+
+
+	bSizer6->Add( bSizer61, 0, wxEXPAND, 5 );
+
 
 	bSizer5->Add( bSizer6, 1, wxEXPAND, 5 );
 
@@ -103,8 +135,12 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	this->Centre( wxBOTH );
 
 	// Connect Events
+	m_Image_Box->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( Frame::m_Image_BoxOnLeftDown ), NULL, this );
 	m_Color_Hexagon_Box->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( Frame::m_color_Hexagon_BoxOnLeftDClick ), NULL, this );
+	m_Color_Hexagon_Box->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( Frame::m_Color_Hexagon_BoxOnLeftDown ), NULL, this );
 	m_Color_Hexagon_Box->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( Frame::m_Color_Hexagon_BoxOnUpdateUI ), NULL, this );
+	m_changedColourButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( Frame::m_changedColourButtonOnButtonClick ), NULL, this );
+	m_pickedColourButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( Frame::m_pickedColourButtonOnButtonClick ), NULL, this );
 	m_Chanel_choice->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( Frame::chanel_choiceOnUpdateUI ), NULL, this );
 	m_Slider_ChangeCoefficient->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( Frame::slider_ChangeCoefficientOnScroll ), NULL, this );
 	m_Slider_ChangeCoefficient->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( Frame::slider_ChangeCoefficientOnScroll ), NULL, this );
@@ -133,8 +169,12 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 Frame::~Frame()
 {
 	// Disconnect Events
+	m_Image_Box->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( Frame::m_Image_BoxOnLeftDown ), NULL, this );
 	m_Color_Hexagon_Box->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( Frame::m_color_Hexagon_BoxOnLeftDClick ), NULL, this );
+	m_Color_Hexagon_Box->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( Frame::m_Color_Hexagon_BoxOnLeftDown ), NULL, this );
 	m_Color_Hexagon_Box->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( Frame::m_Color_Hexagon_BoxOnUpdateUI ), NULL, this );
+	m_changedColourButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( Frame::m_changedColourButtonOnButtonClick ), NULL, this );
+	m_pickedColourButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( Frame::m_pickedColourButtonOnButtonClick ), NULL, this );
 	m_Chanel_choice->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( Frame::chanel_choiceOnUpdateUI ), NULL, this );
 	m_Slider_ChangeCoefficient->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( Frame::slider_ChangeCoefficientOnScroll ), NULL, this );
 	m_Slider_ChangeCoefficient->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( Frame::slider_ChangeCoefficientOnScroll ), NULL, this );

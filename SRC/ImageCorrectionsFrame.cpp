@@ -7,17 +7,22 @@ ImageCorrectionsFrame::ImageCorrectionsFrame(wxWindow* parent)
     m_Image_Box->SetScrollbars(20, 20, 50, 48);
     m_Image_Box->SetBackgroundColour(wxColor(192, 192, 192));
     m_Color_Hexagon_Box->SetBackgroundColour(wxColor(192, 192, 192));
+
+    Initialize_Color_Buttons(wxColour("White"), wxSize{ 64, 32 });
 }
 
 void ImageCorrectionsFrame::image_BoxOnUpdateUI(wxUpdateUIEvent& event)
 {
     // TODO: Implement image_BoxOnUpdateUI
+    //event.GetPosition();
     Repaint();
 }
 
 void ImageCorrectionsFrame::color_Hexagon_BoxOnLeftDClick(wxMouseEvent& event)
 {
      //TODO: Implement color_Hexagon_BoxOnLeftDClick
+    //wxPoint x = event.GetPosition();
+    wxPoint x =wxWindow::ClientToScreen(event.GetPosition());
     Repaint();
 }
 
@@ -373,5 +378,66 @@ void ImageCorrectionsFrame::Saturation(int value)
         Img_Data[i] = Img_RGB.red;
         Img_Data[i + 1] = Img_RGB.green;
         Img_Data[i + 2] = Img_RGB.blue;
+    }
+}
+
+
+void ImageCorrectionsFrame::Initialize_Color_Buttons(const wxColour &init_color, const wxSize& size)
+{
+    const int width{ size.x };
+    const int height{ size.y };
+
+    const unsigned char R = init_color.Red();
+    const unsigned char G = init_color.Green();
+    const unsigned char B = init_color.Blue();
+
+    unsigned char* data = new unsigned char[width * height * 3];
+    unsigned char* data2 = new unsigned char[width * height * 3];
+
+
+    for(int x = 0; x < width; ++x)
+    {
+        for (int y = 0; y < height; ++y)
+        {
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = R;
+            data[base + 1] = G;
+            data[base + 2] = B;
+
+            data2[base + 0] = R;
+            data2[base + 1] = G;
+            data2[base + 2] = B;
+        }
+    }
+
+    m_picked_colorButton_color = wxImage{ size, data, false };
+    m_changed_colorButton_color = wxImage{ size, data2, false };
+
+    m_pickedColourButton->SetBitmap(wxBitmap{ m_picked_colorButton_color });
+    m_changedColourButton->SetBitmap(wxBitmap{ m_changed_colorButton_color });
+}
+
+void ImageCorrectionsFrame::Change_button_colour(wxImage &image, const wxColour &color)
+{
+    const int width{ image.GetSize().GetWidth() };
+    const int height{ image.GetSize().GetHeight() };
+
+    const unsigned char R = color.Red();
+    const unsigned char G = color.Green();
+    const unsigned char B = color.Blue();
+
+    unsigned char* data = new unsigned char[width * height * 3];
+    unsigned char* data2 = new unsigned char[width * height * 3];
+
+
+    for (int x = 0; x < width; ++x)
+    {
+        for (int y = 0; y < height; ++y)
+        {
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = R;
+            data[base + 1] = G;
+            data[base + 2] = B;
+        }
     }
 }

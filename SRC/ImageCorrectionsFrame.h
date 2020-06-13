@@ -105,6 +105,10 @@ protected:
 	*/
 	void Saturation(int value);
 
+	void Initialize_Color_Buttons(const wxColour &, const wxSize &);
+
+	void Change_button_colour(wxImage &, const wxColour &color);
+
 private:
 	/**
 	Przechowuje oryginalny obrazek
@@ -127,6 +131,8 @@ private:
 	*/
 	wxImage color_Picker;
 
+	wxImage m_picked_colorButton_color;
+	wxImage m_changed_colorButton_color;
 
 };
 
