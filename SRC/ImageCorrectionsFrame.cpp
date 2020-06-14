@@ -1,9 +1,9 @@
 #include "ImageCorrectionsFrame.h"
 
 ImageCorrectionsFrame::ImageCorrectionsFrame(wxWindow* parent)
-    : 
+    :
     Frame(parent),
-    m_color_picker_mouse_position{125,125}
+    m_color_picker_mouse_position{ 125,125 }
 {
     m_Image_Box->SetScrollbars(20, 20, 50, 48);
     m_Image_Box->SetBackgroundColour(wxColor(192, 192, 192));
@@ -20,13 +20,14 @@ void ImageCorrectionsFrame::image_BoxOnUpdateUI(wxUpdateUIEvent& event)
 
 void ImageCorrectionsFrame::color_Hexagon_BoxOnLeftDClick(wxMouseEvent& event)
 {
-    wxPoint x =wxWindow::ClientToScreen(event.GetPosition());
+    wxPoint x = wxWindow::ClientToScreen(event.GetPosition());
     Repaint();
 }
 
 void ImageCorrectionsFrame::m_pickedColourButtonOnButtonClick(wxCommandEvent& event)
 {
     Img_Cpy.Replace(Img_RGB_mod.red, Img_RGB_mod.green, Img_RGB_mod.blue, Img_RGB_ref.red, Img_RGB_ref.green, Img_RGB_ref.blue);
+    Img_Cpy2 = Img_Cpy.Copy();
 }
 
 void ImageCorrectionsFrame::m_Image_BoxOnLeftDown(wxMouseEvent& event)
@@ -117,7 +118,7 @@ void ImageCorrectionsFrame::slider_ChangeCoefficientOnScroll(wxScrollEvent& even
 
 void ImageCorrectionsFrame::slider_MixImagesOnScroll(wxScrollEvent& event)
 {
-    Blend_images(m_Slider_MixImages->GetValue()/100.);
+    Blend_images(m_Slider_MixImages->GetValue() / 100.);
     Repaint();
 }
 
@@ -144,7 +145,7 @@ void ImageCorrectionsFrame::menu_File_SaveOnMenuSelection(wxCommandEvent& event)
 {
     if (Img_Cpy.IsOk())
     {
-        std::shared_ptr<wxFileDialog> Dialog(new wxFileDialog(this, _("Zapisz"), _(""), _(""), _("JPEG files (*.jpg)|*.jpg"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT));
+        std::shared_ptr<wxFileDialog> Dialog(new wxFileDialog(this, _("Zapisz"), _(""), _(""), _("PNG files (*.png)|*.png|JPEG files (*.jpg)|*.jpg"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT));
         if (Dialog->ShowModal() == wxID_OK)
         {
             Img_Cpy.AddHandler(new wxJPEGHandler);
@@ -195,8 +196,8 @@ void ImageCorrectionsFrame::Repaint_picker()
 }
 
 constexpr void ImageCorrectionsFrame::fill_hexagon(
-    unsigned char* data, 
-    unsigned int height, 
+    unsigned char* data,
+    unsigned int height,
     unsigned int width)
 {
     constexpr double ratio = 1.728;
@@ -223,10 +224,10 @@ constexpr void ImageCorrectionsFrame::fill_hexagon(
             data[base + 2] = color_ratio * tales * (s - f);
         }
     }
-    for (unsigned int y = height/4; y < height/2; ++y)
+    for (unsigned int y = height / 4; y < height / 2; ++y)
     {
         unsigned int h{ y - height / 4 };
-        for (unsigned int x = 125; x < 125 + (108-h * ratio); ++x)
+        for (unsigned int x = 125; x < 125 + (108 - h * ratio); ++x)
         {
             double f = x - 125.;
             double s = sqrt(3) * y;
@@ -245,9 +246,9 @@ constexpr void ImageCorrectionsFrame::fill_hexagon(
             data[base + 2] = color_ratio * tales * (s - f);
         }
     }
-    
+
     constexpr unsigned int width_h = 216 + 17;
-    for (unsigned int y = height / 4; y < height /2; ++y)
+    for (unsigned int y = height / 4; y < height / 2; ++y)
     {
         unsigned int h{ y - height / 4 };
         for (unsigned int x = 17; x < h * ratio + 17; ++x)
@@ -255,42 +256,42 @@ constexpr void ImageCorrectionsFrame::fill_hexagon(
             double f = x - 17;
             double s = (108 - f) * sqrt(3) / 3.;
             size_t base = (x + width * y) * 3;
-            data[base + 0] = color_ratio*(125 - h + f/tan(M_PI/3.));
-            data[base + 1] = 255 * (2.*sqrt(3)*f/(3.*125.));
+            data[base + 0] = color_ratio * (125 - h + f / tan(M_PI / 3.));
+            data[base + 1] = 255 * (2. * sqrt(3) * f / (3. * 125.));
             data[base + 2] = 255;
         }
-        for (unsigned int x = 216+17; x >= width_h - h * ratio; --x)
+        for (unsigned int x = 216 + 17; x >= width_h - h * ratio; --x)
         {
             double f = x - 125;
             double s = sqrt(3) * h;
             size_t base = (x + width * y) * 3;
-            data[base + 0] = color_ratio * (125 - h + (108-f)/tan(M_PI/3.));
+            data[base + 0] = color_ratio * (125 - h + (108 - f) / tan(M_PI / 3.));
             data[base + 1] = 255;
-            data[base + 2] = 255 * (1-2 * sqrt(3) * f / (3*125.));
+            data[base + 2] = 255 * (1 - 2 * sqrt(3) * f / (3 * 125.));
         }
     }
 
     constexpr double rr = 125. / 108.;
-    for (unsigned int y = height / 2; y < 3*height / 4; ++y)
+    for (unsigned int y = height / 2; y < 3 * height / 4; ++y)
     {
         unsigned int h{ y - height / 2 };
         for (unsigned int x = 17; x <= 125; ++x)
         {
-            double f = x-17;
+            double f = x - 17;
             double s = height / 4 - h + f * tan(M_PI / 6.);
             size_t base = (x + width * y) * 3;
-            data[base + 0] = color_ratio * (height/4. - h + f/tan(M_PI/3.));
+            data[base + 0] = color_ratio * (height / 4. - h + f / tan(M_PI / 3.));
             data[base + 1] = 255 * f / (cos(M_PI / 6.) * 125);
             data[base + 2] = 255;
         }
-        for (unsigned int x = 125; x <= 216+17; ++x)
+        for (unsigned int x = 125; x <= 216 + 17; ++x)
         {
             double f = x - 125;
-            double s = (f) * sqrt(3) / 3.;;
+            double s = (f)*sqrt(3) / 3.;;
             size_t base = (x + width * y) * 3;
-            data[base + 0] = 255*(1-(h+s)/125.);
+            data[base + 0] = 255 * (1 - (h + s) / 125.);
             data[base + 1] = 255;
-            data[base + 2] = 255 * (2 * sqrt(3) *(108 - f) / (3 * 125.));
+            data[base + 2] = 255 * (2 * sqrt(3) * (108 - f) / (3 * 125.));
         }
     }
 
@@ -321,7 +322,7 @@ constexpr void ImageCorrectionsFrame::fill_hexagon(
 
 void ImageCorrectionsFrame::Contrast(int value)
 {
-    Img_Cpy = Img_Org.Copy();
+    Img_Cpy = Img_Cpy2.Copy();
     int size = Img_Org.GetWidth() * Img_Org.GetHeight() * 3;
     unsigned char* Img_Data = Img_Cpy.GetData();
 
@@ -342,7 +343,7 @@ void ImageCorrectionsFrame::Contrast(int value)
 
 void ImageCorrectionsFrame::Brightness(int value)
 {
-    Img_Cpy = Img_Org.Copy();
+    Img_Cpy = Img_Cpy2.Copy();
     int size = Img_Org.GetWidth() * Img_Org.GetHeight() * 3;
     unsigned char* Img_Data = Img_Cpy.GetData();
 
@@ -392,7 +393,7 @@ void ImageCorrectionsFrame::Tone(int value)
 
 void ImageCorrectionsFrame::Saturation(int value)
 {
-    Img_Cpy = Img_Org.Copy();
+    Img_Cpy = Img_Cpy2.Copy();
     int size = Img_Org.GetWidth() * Img_Org.GetHeight() * 3;
     unsigned char* Img_Data = Img_Cpy.GetData();
 
@@ -430,7 +431,7 @@ void ImageCorrectionsFrame::Saturation(int value)
 }
 
 
-void ImageCorrectionsFrame::Initialize_Color_Buttons(const wxColour &init_color, const wxSize& size)
+void ImageCorrectionsFrame::Initialize_Color_Buttons(const wxColour& init_color, const wxSize& size)
 {
     const int width{ size.x };
     const int height{ size.y };
@@ -443,7 +444,7 @@ void ImageCorrectionsFrame::Initialize_Color_Buttons(const wxColour &init_color,
     unsigned char* data2 = new unsigned char[width * height * 3];
 
 
-    for(int x = 0; x < width; ++x)
+    for (int x = 0; x < width; ++x)
     {
         for (int y = 0; y < height; ++y)
         {
@@ -465,7 +466,7 @@ void ImageCorrectionsFrame::Initialize_Color_Buttons(const wxColour &init_color,
     m_changedColourButton->SetBitmap(wxBitmap{ m_changed_colorButton_color });
 }
 
-void ImageCorrectionsFrame::Change_button_color(wxBitmapButton *button, wxImage &image, const wxColour &color)
+void ImageCorrectionsFrame::Change_button_color(wxBitmapButton* button, wxImage& image, const wxColour& color)
 {
     const int width{ image.GetSize().GetWidth() };
     const int height{ image.GetSize().GetHeight() };
