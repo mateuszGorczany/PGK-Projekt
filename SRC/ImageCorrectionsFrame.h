@@ -32,8 +32,9 @@ public:
 	Służy do rysowania hexagonu kolorów
 	*/
 	void Repaint_picker();
-	void Draw_mouse_position_on_color_picker(const wxPoint& position);
-
+	/**
+	Inicjuje sześciokąt kolorów
+	*/
 	void Initialize_picker();
 	/**
 	Służy do rysowania hexagonu kolorów
@@ -42,12 +43,18 @@ public:
 	\param width szerokość obszaru na hexagon
 	*/
 	constexpr void fill_hexagon(
-    unsigned char* data,
-    unsigned int height,
-    unsigned int width);
-		
+		unsigned char* data,
+		unsigned int height,
+		unsigned int width);
+
 protected:
+	/**
+	Służy do pobrania koloru z obrazka
+	*/
 	void m_Image_BoxOnLeftDown(wxMouseEvent& event) override final;
+	/**
+	Służy do pobrania koloru z sześciokąta
+	*/
 	void m_Color_Hexagon_BoxOnLeftDown(wxMouseEvent& event) override final;
 
 
@@ -111,13 +118,27 @@ protected:
 	\param value aktualne położenie suwaka
 	*/
 	void Saturation(int value);
-
-	void Initialize_Color_Buttons(const wxColour &, const wxSize &);
-
-	void Change_button_color(wxBitmapButton*, wxImage &, const wxColour &color);
-
+	/**
+	Służy do zmiany nasycenia
+	\param init_color kolor wypełnienia
+	\param size rozmiar pola
+	*/
+	void Initialize_Color_Buttons(const wxColour& init_color, const wxSize& size);
+	/**
+	Służy do zmiany nasycenia
+	\param button bitmapa guzika z kolorem
+	\param image obraz guzika
+	\param color wypełnienia
+	*/
+	void Change_button_color(wxBitmapButton* button, wxImage& image, const wxColour& color);
+	/**
+	Służy do zmiany koloru na obrazkie
+	*/
 	void m_pickedColourButtonOnButtonClick(wxCommandEvent& event) override final;
-
+	/**
+	Służy do mieszania obrazów oryginalnego ze skorygowanym
+	\param value aktualne położenie suwaka
+	*/
 	void Blend_images(double value);
 
 private:
@@ -165,7 +186,9 @@ private:
 	Przechowuje obrazek koloru modyfikowanego
 	*/
 	wxImage m_changed_colorButton_color;
-
+	/**
+	Przechowuje obrazek zastępczy
+	*/
 	wxImage Img_Cpy2;
 
 };
