@@ -18,12 +18,6 @@ void ImageCorrectionsFrame::image_BoxOnUpdateUI(wxUpdateUIEvent& event)
     Repaint();
 }
 
-void ImageCorrectionsFrame::color_Hexagon_BoxOnLeftDClick(wxMouseEvent& event)
-{
-    wxPoint x = wxWindow::ClientToScreen(event.GetPosition());
-    Repaint();
-}
-
 void ImageCorrectionsFrame::m_pickedColourButtonOnButtonClick(wxCommandEvent& event)
 {
     Img_Cpy.Replace(Img_RGB_mod.red, Img_RGB_mod.green, Img_RGB_mod.blue, Img_RGB_ref.red, Img_RGB_ref.green, Img_RGB_ref.blue);
@@ -43,20 +37,14 @@ void ImageCorrectionsFrame::m_Image_BoxOnLeftDown(wxMouseEvent& event)
                                         position.y),
                   Img_Cpy.GetBlue(position.x,
                                        position.y) };
-    //Change_button_color(m_changedColourButton,
-    //    m_changed_colorButton_color,
-    //    wxColour{ Img_Cpy.GetRed(position.x,
-    //                                  position.y),
-    //              Img_Cpy.GetGreen(position.x,
-    //                                    position.y),
-    //              Img_Cpy.GetBlue(position.x,
-    //                                   position.y) });
 
     Change_button_color(m_changedColourButton,
         m_changed_colorButton_color,
         wxColour{ Img_RGB_mod.red,
                   Img_RGB_mod.green,
                   Img_RGB_mod.blue, });
+
+    m_Slider_ChangeCoefficient->SetValue(100);
 }
 
 void ImageCorrectionsFrame::m_Color_Hexagon_BoxOnLeftDown(wxMouseEvent& event)
@@ -134,6 +122,7 @@ void ImageCorrectionsFrame::menu_File_OpenOnMenuSelection(wxCommandEvent& event)
         Img_Cpy.AddHandler(new wxJPEGHandler);
         Img_Cpy.AddHandler(new wxPNGHandler);
         Img_Cpy.LoadFile(Dialog->GetPath());
+        Img_Cpy2 = Img_Cpy.Copy();
     }
     if (Img_Org.IsOk())
     {
@@ -168,10 +157,10 @@ void ImageCorrectionsFrame::Repaint()
 {
     if (Img_Cpy.IsOk())
     {
-        wxBitmap bitmap(Img_Cpy);          // Tworzymy tymczasowa bitmape na podstawie Img_Cpy
-        wxClientDC dc(m_Image_Box);  // Pobieramy kontekst okna
-        m_Image_Box->DoPrepareDC(dc); // Musimy wywolac w przypadku wxScrolledWindow, zeby suwaki prawidlowo dzialaly
-        dc.DrawBitmap(bitmap, 0, 0, false); // Rysujemy bitmape na kontekscie urzadzenia
+        wxBitmap bitmap(Img_Cpy);
+        wxClientDC dc(m_Image_Box);  
+        m_Image_Box->DoPrepareDC(dc); 
+        dc.DrawBitmap(bitmap, 0, 0, false);
     }
 }
 

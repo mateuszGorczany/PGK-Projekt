@@ -29,11 +29,12 @@ public:
 	*/
 	void Repaint();
 	/**
-	Służy do rysowania hexagonu kolorów
+	Służy do rysowania hexagonu kolorów, pokazuje aktualnie wybrany kolor
 	*/
 	void Repaint_picker();
-	void Draw_mouse_position_on_color_picker(const wxPoint& position);
-
+	/**
+	Inicjalizuje hexagon kolorów
+	*/
 	void Initialize_picker();
 	/**
 	Służy do rysowania hexagonu kolorów
@@ -47,8 +48,6 @@ public:
     unsigned int width);
 		
 protected:
-	void m_Image_BoxOnLeftDown(wxMouseEvent& event) override final;
-	void m_Color_Hexagon_BoxOnLeftDown(wxMouseEvent& event) override final;
 
 
 	/**
@@ -58,9 +57,13 @@ protected:
 	/**
 	Pobieranie koloru obrazka
 	*/
-	void color_Hexagon_BoxOnLeftDClick(wxMouseEvent& event);
+	void m_Image_BoxOnLeftDown(wxMouseEvent& event);
 	/**
-	Pobieranie koloru hexagonu
+	Pobieranie koloru hexagonu przy kliknięciu
+	*/
+	void m_Color_Hexagon_BoxOnLeftDown(wxMouseEvent& event);
+	/**
+	Odświeżanie hexagonu
 	*/
 	void m_Color_Hexagon_BoxOnUpdateUI(wxUpdateUIEvent& event);
 	/**
@@ -111,13 +114,27 @@ protected:
 	\param value aktualne położenie suwaka
 	*/
 	void Saturation(int value);
-
+	/**
+	Służy do tworzenia okienek z kolorami
+	\param init_color kolor wypełnienia
+	\param size rozmiar okna
+	*/
 	void Initialize_Color_Buttons(const wxColour &, const wxSize &);
-
+	/**
+	Służy do wypełnienia okienek z kolorami
+	\param button bitmapa okienka z kolorem
+	\param image obrazek okienka
+	\param color kolor wypełnienia
+	*/
 	void Change_button_color(wxBitmapButton*, wxImage &, const wxColour &color);
-
-	void m_pickedColourButtonOnButtonClick(wxCommandEvent& event) override final;
-
+	/**
+	Służy do zmieniania koloru okna, wyświetlającego wybrany kolor
+	*/
+	void m_pickedColourButtonOnButtonClick(wxCommandEvent& event);
+	/**
+	Służy do mieszania obrazów
+	\param value poziom mieszania, 0 - obraz oryginalny, 1 - obraz zmodyfikowany 
+	*/
 	void Blend_images(double value);
 
 private:
@@ -126,9 +143,13 @@ private:
 	*/
 	wxImage Img_Org;
 	/**
-	Przechowuje modyfikowany obrazek
+	Przechowuje modyfikowany obrazek, obraz który jest wyświetlany
 	*/
 	wxImage	Img_Cpy;
+	/**
+	Przechowuje kopię modyfikowanego obrazka
+	*/
+	wxImage Img_Cpy2;
 	/**
 	Przechowuje wartości HSV piksela
 	*/
@@ -165,9 +186,6 @@ private:
 	Przechowuje obrazek koloru modyfikowanego
 	*/
 	wxImage m_changed_colorButton_color;
-
-	wxImage Img_Cpy2;
-
 };
 
 #endif // __ImageCorrectionsFrame__
