@@ -118,16 +118,17 @@ protected:
 
 	void m_pickedColourButtonOnButtonClick(wxCommandEvent& event) override final;
 
+	void Blend_images(double value);
+
 private:
 	/**
 	Przechowuje oryginalny obrazek
 	*/
-	wxImage Img_Org; 
+	wxImage Img_Org;
 	/**
 	Przechowuje modyfikowany obrazek
 	*/
 	wxImage	Img_Cpy;
-	//wxImage Edited_Image;
 	/**
 	Przechowuje wartości HSV piksela
 	*/
@@ -137,15 +138,35 @@ private:
 	*/
 	wxImage::RGBValue Img_RGB;
 	/**
+	Przechowuje wartości RGB referencyjne piksela
+	*/
+	wxImage::RGBValue Img_RGB_ref;
+	/**
+	Przechowuje wartości RGB modyfikowane piksela
+	*/
+	wxImage::RGBValue Img_RGB_mod;
+	/**
 	Przechowuje hexagon kolorów
 	*/
 	wxImage color_Picker;
+	/**
+	Przechowuje koordynaty na sześciokącie
+	*/
 	wxPoint m_color_picker_mouse_position;
+	/**
+	Przechowuje koordynaty na obrazku
+	*/
 	wxPoint m_image_mouse_position;
-
+	/**
+	Przechowuje obrazek koloru referencyjnego
+	*/
 	wxImage m_picked_colorButton_color;
+	/**
+	Przechowuje obrazek koloru modyfikowanego
+	*/
 	wxImage m_changed_colorButton_color;
 
+	wxImage Img_Cpy2;
 
 };
 

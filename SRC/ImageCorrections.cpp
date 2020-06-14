@@ -92,7 +92,7 @@ Frame::Frame( wxWindow* parent, wxWindowID id, const wxString& title, const wxPo
 	m_StaticText_MixImages->Wrap( -1 );
 	bSizer7->Add( m_StaticText_MixImages, 0, wxALIGN_CENTER|wxALL, 5 );
 
-	m_Slider_MixImages = new wxSlider( this, wxID_ANY, 100, 0, 200, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	m_Slider_MixImages = new wxSlider( this, wxID_ANY, 100, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
 	bSizer7->Add( m_Slider_MixImages, 0, wxALIGN_CENTER|wxALL, 5 );
 
 

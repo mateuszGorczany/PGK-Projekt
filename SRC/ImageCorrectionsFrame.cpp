@@ -26,41 +26,56 @@ void ImageCorrectionsFrame::color_Hexagon_BoxOnLeftDClick(wxMouseEvent& event)
 
 void ImageCorrectionsFrame::m_pickedColourButtonOnButtonClick(wxCommandEvent& event)
 {
-    Img_Cpy.Replace(m_changed_colorButton_color.GetRed(5, 5),
-        m_changed_colorButton_color.GetGreen(5, 5),
-        m_changed_colorButton_color.GetBlue(5, 5),
-        m_picked_colorButton_color.GetRed(5, 5),
-        m_picked_colorButton_color.GetGreen(5, 5),
-        m_picked_colorButton_color.GetBlue(5, 5));
+    Img_Cpy.Replace(Img_RGB_mod.red, Img_RGB_mod.green, Img_RGB_mod.blue, Img_RGB_ref.red, Img_RGB_ref.green, Img_RGB_ref.blue);
 }
 
 void ImageCorrectionsFrame::m_Image_BoxOnLeftDown(wxMouseEvent& event)
 {
     if (!Img_Org.IsOk())
         return;
-    wxPoint position = event.GetPosition();
-    Change_button_color(m_changedColourButton,
-        m_changed_colorButton_color,
-        wxColour{ Img_Cpy.GetRed(position.x,
+    wxPoint position = ScreenToClient(wxGetMousePosition());
+    position.x += m_Image_Box->GetViewStart().x * 20;
+    position.y += m_Image_Box->GetViewStart().y * 20;
+    Img_RGB_mod = wxImage::RGBValue{ Img_Cpy.GetRed(position.x,
                                       position.y),
                   Img_Cpy.GetGreen(position.x,
                                         position.y),
                   Img_Cpy.GetBlue(position.x,
-                                       position.y) });
+                                       position.y) };
+    //Change_button_color(m_changedColourButton,
+    //    m_changed_colorButton_color,
+    //    wxColour{ Img_Cpy.GetRed(position.x,
+    //                                  position.y),
+    //              Img_Cpy.GetGreen(position.x,
+    //                                    position.y),
+    //              Img_Cpy.GetBlue(position.x,
+    //                                   position.y) });
+
+    Change_button_color(m_changedColourButton,
+        m_changed_colorButton_color,
+        wxColour{ Img_RGB_mod.red,
+                  Img_RGB_mod.green,
+                  Img_RGB_mod.blue, });
 }
 
 void ImageCorrectionsFrame::m_Color_Hexagon_BoxOnLeftDown(wxMouseEvent& event)
 {
 
     m_color_picker_mouse_position = event.GetPosition();
+    Img_RGB_ref = wxImage::RGBValue{ color_Picker.GetRed(m_color_picker_mouse_position.x,
+                                      m_color_picker_mouse_position.y),
+                  color_Picker.GetGreen(m_color_picker_mouse_position.x,
+                                        m_color_picker_mouse_position.y),
+                  color_Picker.GetBlue(m_color_picker_mouse_position.x,
+                                       m_color_picker_mouse_position.y) };
     Change_button_color(m_pickedColourButton,
-                        m_picked_colorButton_color, 
-                        wxColour{ color_Picker.GetRed(m_color_picker_mouse_position.x,
-                                                      m_color_picker_mouse_position.y),
-                                  color_Picker.GetGreen(m_color_picker_mouse_position.x,
-                                                        m_color_picker_mouse_position.y),
-                                  color_Picker.GetBlue(m_color_picker_mouse_position.x,
-                                                       m_color_picker_mouse_position.y) });
+        m_picked_colorButton_color,
+        wxColour{ color_Picker.GetRed(m_color_picker_mouse_position.x,
+                                      m_color_picker_mouse_position.y),
+                  color_Picker.GetGreen(m_color_picker_mouse_position.x,
+                                        m_color_picker_mouse_position.y),
+                  color_Picker.GetBlue(m_color_picker_mouse_position.x,
+                                       m_color_picker_mouse_position.y) });
 }
 
 
@@ -102,6 +117,7 @@ void ImageCorrectionsFrame::slider_ChangeCoefficientOnScroll(wxScrollEvent& even
 
 void ImageCorrectionsFrame::slider_MixImagesOnScroll(wxScrollEvent& event)
 {
+    Blend_images(m_Slider_MixImages->GetValue()/100.);
     Repaint();
 }
 
@@ -351,29 +367,27 @@ void ImageCorrectionsFrame::Brightness(int value)
 
 void ImageCorrectionsFrame::Tone(int value)
 {
-    Img_Cpy = Img_Org.Copy();
-    int size = Img_Org.GetWidth() * Img_Org.GetHeight() * 3;
-    unsigned char* Img_Data = Img_Cpy.GetData();
-
-    int Rref = m_picked_colorButton_color.GetRed(5,5);
-    int Gref = m_picked_colorButton_color.GetGreen(5, 5);
-    int Bref = m_picked_colorButton_color.GetBlue(5, 5);
-    int Rmod = m_changed_colorButton_color.GetRed(5, 5);
-    int Gmod = m_changed_colorButton_color.GetGreen(5, 5);
-    int Bmod = m_changed_colorButton_color.GetBlue(5, 5);
-
-
-    for (int i = 0; i < size; i += 3)
+    if (Img_Cpy.IsOk())
     {
-        if (Img_Data[i] != Rmod && Img_Data[i + 1] != Gmod && Img_Data[i + 2] != Bmod)
+        Img_Cpy = Img_Org.Copy();
+
+        int size = Img_Org.GetWidth() * Img_Org.GetHeight() * 3;
+        unsigned char* Img_Data = Img_Cpy.GetData();
+        unsigned char* Img_Datao = Img_Org.GetData();
+
+
+        for (int i = 0; i < size; i += 3)
         {
-            Img_Data[i] = 1 / fabs(Img_Data[i] - Rmod) * Rref * value / 100;
-            Img_Data[i+1] = 1 / fabs(Img_Data[i+1] - Gmod) * Gref * value / 100;
-            Img_Data[i+2] = 1 / fabs(Img_Data[i+2] - Bmod) * Bref * value / 100;
+            if (Img_Data[i] != Img_RGB_mod.red && Img_Data[i + 1] != Img_RGB_mod.green && Img_Data[i + 2] != Img_RGB_mod.blue)
+            {
+                Img_Data[i] = 1. / fabs(Img_Datao[i] - Img_RGB_ref.red) * Img_RGB_mod.red * value / 100;
+                Img_Data[i + 1] = 1. / fabs(Img_Datao[i + 1] - Img_RGB_ref.green) * Img_RGB_mod.green * value / 100;
+                Img_Data[i + 2] = 1. / fabs(Img_Datao[i + 2] - Img_RGB_ref.blue) * Img_RGB_mod.blue * value / 100;
+            }
         }
+        Img_Cpy.Replace(Img_RGB_mod.red, Img_RGB_mod.green, Img_RGB_mod.blue, Img_RGB_ref.red, Img_RGB_ref.green, Img_RGB_ref.blue);
+        Img_Cpy2 = Img_Cpy.Copy();
     }
-    Img_Cpy.Replace(Rmod, Gmod, Bmod, Rref, Gref, Bref);
-    Repaint();
 }
 
 void ImageCorrectionsFrame::Saturation(int value)
@@ -475,3 +489,24 @@ void ImageCorrectionsFrame::Change_button_color(wxBitmapButton *button, wxImage 
     button->SetBitmap(wxBitmap{ image });
 }
 
+
+void ImageCorrectionsFrame::Blend_images(double value)
+{
+    const int width{ Img_Cpy.GetSize().GetWidth() };
+    const int height{ Img_Cpy.GetSize().GetHeight() };
+
+    unsigned char* data = Img_Cpy.GetData();
+    unsigned char* data2 = Img_Cpy2.GetData();
+    const unsigned char* org_data = Img_Org.GetData();
+
+    for (int x = 0; x < width; ++x)
+    {
+        for (int y = 0; y < height; ++y)
+        {
+            size_t base = (x + width * y) * 3;
+            data[base + 0] = value * data2[base + 0] + (1. - value) * org_data[base + 0];
+            data[base + 1] = value * data2[base + 1] + (1. - value) * org_data[base + 1];
+            data[base + 2] = value * data2[base + 2] + (1. - value) * org_data[base + 2];
+        }
+    }
+}
