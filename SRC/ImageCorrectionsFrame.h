@@ -25,7 +25,7 @@ public:
 	*/
 	ImageCorrectionsFrame(wxWindow* parent);
 	/**
-	Służy do rysowania obraza w stanie aktualnym
+	Służy do rysowania obrazka w stanie aktualnym
 	*/
 	void Repaint();
 	/**
@@ -33,7 +33,7 @@ public:
 	*/
 	void Repaint_picker();
 	/**
-	Inicjalizuje hexagon kolorów
+	Inicjuje sześciokąt kolorów
 	*/
 	void Initialize_picker();
 	/**
@@ -43,11 +43,19 @@ public:
 	\param width szerokość obszaru na hexagon
 	*/
 	constexpr void fill_hexagon(
-    unsigned char* data,
-    unsigned int height,
-    unsigned int width);
-		
+		unsigned char* data,
+		unsigned int height,
+		unsigned int width);
+
 protected:
+	/**
+	Służy do pobrania koloru z obrazka
+	*/
+	void m_Image_BoxOnLeftDown(wxMouseEvent& event) override final;
+	/**
+	Służy do pobrania koloru z sześciokąta
+	*/
+	void m_Color_Hexagon_BoxOnLeftDown(wxMouseEvent& event) override final;
 
 
 	/**
@@ -55,15 +63,7 @@ protected:
 	*/
 	void image_BoxOnUpdateUI(wxUpdateUIEvent& event);
 	/**
-	Pobieranie koloru obrazka
-	*/
-	void m_Image_BoxOnLeftDown(wxMouseEvent& event);
-	/**
-	Pobieranie koloru hexagonu przy kliknięciu
-	*/
-	void m_Color_Hexagon_BoxOnLeftDown(wxMouseEvent& event);
-	/**
-	Odświeżanie hexagonu
+	Pobieranie koloru hexagonu
 	*/
 	void m_Color_Hexagon_BoxOnUpdateUI(wxUpdateUIEvent& event);
 	/**
@@ -115,25 +115,25 @@ protected:
 	*/
 	void Saturation(int value);
 	/**
-	Służy do tworzenia okienek z kolorami
+	Służy do zmiany nasycenia
 	\param init_color kolor wypełnienia
-	\param size rozmiar okna
+	\param size rozmiar pola
 	*/
-	void Initialize_Color_Buttons(const wxColour &, const wxSize &);
+	void Initialize_Color_Buttons(const wxColour& init_color, const wxSize& size);
 	/**
-	Służy do wypełnienia okienek z kolorami
-	\param button bitmapa okienka z kolorem
-	\param image obrazek okienka
-	\param color kolor wypełnienia
+	Służy do zmiany nasycenia
+	\param button bitmapa guzika z kolorem
+	\param image obraz guzika
+	\param color wypełnienia
 	*/
-	void Change_button_color(wxBitmapButton*, wxImage &, const wxColour &color);
+	void Change_button_color(wxBitmapButton* button, wxImage& image, const wxColour& color);
 	/**
-	Służy do zmieniania koloru okna, wyświetlającego wybrany kolor
+	Służy do zmiany koloru na obrazkie
 	*/
-	void m_pickedColourButtonOnButtonClick(wxCommandEvent& event);
+	void m_pickedColourButtonOnButtonClick(wxCommandEvent& event) override final;
 	/**
-	Służy do mieszania obrazów
-	\param value poziom mieszania, 0 - obraz oryginalny, 1 - obraz zmodyfikowany 
+	Służy do mieszania obrazów oryginalnego ze skorygowanym
+	\param value aktualne położenie suwaka
 	*/
 	void Blend_images(double value);
 
@@ -143,13 +143,9 @@ private:
 	*/
 	wxImage Img_Org;
 	/**
-	Przechowuje modyfikowany obrazek, obraz który jest wyświetlany
+	Przechowuje modyfikowany obrazek, wyświetlana wersja
 	*/
 	wxImage	Img_Cpy;
-	/**
-	Przechowuje kopię modyfikowanego obrazka
-	*/
-	wxImage Img_Cpy2;
 	/**
 	Przechowuje wartości HSV piksela
 	*/
@@ -186,6 +182,11 @@ private:
 	Przechowuje obrazek koloru modyfikowanego
 	*/
 	wxImage m_changed_colorButton_color;
+	/**
+	Przechowuje obrazek zastępczy
+	*/
+	wxImage Img_Cpy2;
+
 };
 
 #endif // __ImageCorrectionsFrame__

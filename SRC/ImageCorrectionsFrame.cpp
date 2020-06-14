@@ -192,6 +192,8 @@ constexpr void ImageCorrectionsFrame::fill_hexagon(
     constexpr double ratio = 1.728;
     constexpr double tales = 125 / 216.5;
     constexpr double color_ratio = 2.04;
+
+    #pragma omp parallel
     for (unsigned int y = 0; y < height / 4; ++y)
     {
         for (unsigned int x = 125; x < 125 + y * ratio; ++x)
@@ -317,6 +319,7 @@ void ImageCorrectionsFrame::Contrast(int value)
 
     double contrast = (double(value) + 100) / (100.0001 - value);
 
+    #pragma omp parallel
     for (int i = 0; i < size; i++)
     {
         int tmp = (Img_Data[i] - 255.0 / 2) * contrast + 255.0 / 2;
@@ -338,6 +341,7 @@ void ImageCorrectionsFrame::Brightness(int value)
 
     int temp;
 
+    #pragma omp parallel
     for (int i = 0; i < size; i++)
     {
         temp = Img_Data[i] + value;
@@ -359,13 +363,13 @@ void ImageCorrectionsFrame::Tone(int value)
 {
     if (Img_Cpy.IsOk())
     {
-        Img_Cpy = Img_Org.Copy();
+        Img_Cpy = Img_Cpy2.Copy();
 
         int size = Img_Org.GetWidth() * Img_Org.GetHeight() * 3;
         unsigned char* Img_Data = Img_Cpy.GetData();
         unsigned char* Img_Datao = Img_Org.GetData();
 
-
+        #pragma omp parallel
         for (int i = 0; i < size; i += 3)
         {
             if (Img_Data[i] != Img_RGB_mod.red && Img_Data[i + 1] != Img_RGB_mod.green && Img_Data[i + 2] != Img_RGB_mod.blue)
@@ -386,6 +390,7 @@ void ImageCorrectionsFrame::Saturation(int value)
     int size = Img_Org.GetWidth() * Img_Org.GetHeight() * 3;
     unsigned char* Img_Data = Img_Cpy.GetData();
 
+    #pragma omp parallel
     for (int i = 0; i < size; i += 3)
     {
         Img_RGB.red = Img_Data[i];
@@ -432,7 +437,7 @@ void ImageCorrectionsFrame::Initialize_Color_Buttons(const wxColour& init_color,
     unsigned char* data = new unsigned char[width * height * 3];
     unsigned char* data2 = new unsigned char[width * height * 3];
 
-
+    #pragma omp parallel
     for (int x = 0; x < width; ++x)
     {
         for (int y = 0; y < height; ++y)
@@ -466,6 +471,7 @@ void ImageCorrectionsFrame::Change_button_color(wxBitmapButton* button, wxImage&
 
     unsigned char* data = image.GetData();
 
+    #pragma omp parallel
     for (int x = 0; x < width; ++x)
     {
         for (int y = 0; y < height; ++y)
@@ -489,6 +495,7 @@ void ImageCorrectionsFrame::Blend_images(double value)
     unsigned char* data2 = Img_Cpy2.GetData();
     const unsigned char* org_data = Img_Org.GetData();
 
+    #pragma omp parallel
     for (int x = 0; x < width; ++x)
     {
         for (int y = 0; y < height; ++y)
