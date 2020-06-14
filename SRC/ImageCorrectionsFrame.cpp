@@ -369,7 +369,6 @@ void ImageCorrectionsFrame::Tone(int value)
         unsigned char* Img_Data = Img_Cpy.GetData();
         unsigned char* Img_Datao = Img_Org.GetData();
 
-        #pragma omp parallel
         for (int i = 0; i < size; i += 3)
         {
             if (Img_Data[i] != Img_RGB_mod.red && Img_Data[i + 1] != Img_RGB_mod.green && Img_Data[i + 2] != Img_RGB_mod.blue)
